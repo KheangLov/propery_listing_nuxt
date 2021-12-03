@@ -1,0 +1,118 @@
+// custom.scss
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700,900&display=swap');
+// All of your custom SCSS variables go first
+$font-family-sans-serif: 'Montserrat', sans-serif;
+$primary: #7D61C8;
+$light: #fff;
+$dark-light: #fbfbfd;
+$body: #eaeaea;
+$footer-name: #343a40;
+$footer-text: #868e96;
+//then bootstrap & bootstrap-vue should be added after
+//so that they inherit the custom SCSS variables
+@import 'bootstrap/scss/bootstrap.scss';
+@import 'bootstrap-vue/src/index.scss';
+@import "~noty/src/noty.scss";
+@import "~noty/src/themes/mint.scss";
+
+//all other custom scss files or css should be added here
+body {
+  background-color: $body;
+}
+
+.outter-wrapper {
+
+  .section-wrapper {
+    position: relative;
+    z-index: 1021;
+    padding: 80px 0;
+
+    &.bg-white {
+      background-color: $light;
+    }
+
+    &.bg-dark-white {
+      background-color: $dark-light;
+    }
+
+    .sect-header {
+      font-size: 54px;
+      font-weight: bold;
+      line-height: 70px;
+      color: #463853;
+      margin-bottom: 30px;
+    }
+
+    .sect-text {
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 40px;
+      color: #998DA0;
+      margin-bottom: 30px;
+    }
+  }
+}
+
+.footer {
+  padding: 80px 0;
+  background-color: $light;
+
+  .footer-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .text-brand {
+    display: inline-block;
+    margin-top: 5px;
+
+    .name {
+      font-size: 20px;
+      font-weight: 600;
+      color: $footer-name;
+      margin: 0;
+      margin-bottom: 10px;
+    }
+
+    .text {
+      font-size: 16px;
+      font-weight: 600;
+      color: $footer-text;
+      margin: 0;
+    }
+  }
+
+  .text-footer {
+    font-size: 16px;
+    font-weight: 600;
+    color: $footer-text;
+    line-height: 25px;
+  }
+
+  .cpyr-footer {
+    font-size: 16px;
+    font-weight: 600;
+    color: $footer-text;
+  }
+
+  .menu-title {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: $footer-name;
+  }
+
+  .nav-footer {
+
+    .nav-item {
+      margin-bottom: 10px;
+
+      .nav-link {
+        padding: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: $footer-text;
+      }
+    }
+  }
+}

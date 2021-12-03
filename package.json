@@ -1,0 +1,30 @@
+{
+  "name": "prop-listing",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/auth": "^4.9.1",
+    "@nuxtjs/axios": "^5.12.2",
+    "add": "^2.0.6",
+    "axios": "^0.20.0",
+    "bootstrap-icons": "^1.7.1",
+    "bootstrap-vue": "^2.17.3",
+    "core-js": "^3.6.5",
+    "lodash": "^4.17.20",
+    "moment": "^2.28.0",
+    "node-sass": "^4.14.1",
+    "noty": "^3.2.0-beta",
+    "nuxt": "^2.14.5",
+    "sass-loader": "^10.0.2",
+    "vee-validate": "^3.4.14",
+    "vue-fragment": "^1.5.2",
+    "yarn": "^1.22.17"
+  },
+  "devDependencies": {}
+}
