@@ -1,15 +1,18 @@
 <template>
   <fragment>
-    <b-button variant="primary" class="mb-3">
-      <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon> Add User
-    </b-button>
+    <b-link href="/user/create" class="btn btn-secondary mb-3">
+      <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon>
+      <span style="font-size: 18px;">
+        Add User
+      </span>
+    </b-link>
+
     <b-table
       :items="items"
       :fields="fields"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
-      responsive
     >
       <template #cell(actions)>
         <b-button variant="link" class="text-info p-0">
