@@ -5,7 +5,7 @@
       <b-form @submit.prevent="handleSubmit">
         <b-form-group
           id="input-group-phone"
-          label="Phone"
+          label="Email"
           label-for="input-phone"
         >
           <validation-provider
@@ -15,10 +15,10 @@
           >
             <b-form-input
               id="input-phone"
-              v-model="form.phone"
-              type="tel"
+              v-model="form.email"
+              type="email"
               required
-              placeholder="Enter phone"
+              placeholder="Enter email"
               :class="errors.length ? 'border-danger' : ''"
             >
             </b-form-input>
@@ -54,7 +54,8 @@
           </validation-provider>
         </b-form-group>
         <div class="text-center d-flex mx-auto justify-content-between">
-          <b-link to="/auth/login">Forgot password?</b-link>
+          <!-- <b-link to="/auth/login">Forgot password?</b-link> -->
+          <b-link href="/auth/register">Register</b-link>
         </div>
         <b-button type="submit" block variant="outline-primary mt-4">Login</b-button>
       </b-form>
@@ -75,11 +76,7 @@ export default {
   },
   data() {
     return {
-      form: {
-        phone: '+85570218869',
-        password: '12345678',
-        domain: 'web',
-      }
+      form: {}
     };
   },
   computed: {
@@ -99,6 +96,22 @@ export default {
           }
 
           const vm = this;
+          // await axios.post('http://localhost:9900/login', this.form)
+          //   .then(res => console.log(res))
+          //   .catch(err => {
+          //     let message = 'Error!';
+          //     if (err.response.data && err.response.data.errors) {
+          //       vm.$refs.form.setErrors(err.response.data.errors);
+          //       message = err.response.data.message;
+          //     }
+
+          //     new Noty({
+          //       text: message,
+          //       type: 'error',
+          //       timeout: 2000
+          //     }).show();
+          //   });
+
           await this.$auth.loginWith('local', { data: this.form })
             .then(res => console.log(res))
             .catch(err => {

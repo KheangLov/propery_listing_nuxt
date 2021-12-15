@@ -10,7 +10,8 @@
       ></b-avatar>
       <p>
         <strong>Username:</strong>
-        {{ loggedInUser.full_name }}
+        {{ loggedInUser.first_name }}
+        {{ loggedInUser.last_name }}
       </p>
       <p>
         <strong>Email:</strong>

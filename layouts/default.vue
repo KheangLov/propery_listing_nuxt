@@ -26,7 +26,8 @@
               ></b-avatar>
             </template>
             <b-dropdown-item disabled>
-              {{ loggedInUser.full_name }}
+              {{ loggedInUser.first_name }}
+              {{ loggedInUser.last_name }}
             </b-dropdown-item>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item
@@ -207,7 +208,7 @@ export default {
           icon: 'list-check',
         },
         {
-          link: '/',
+          link: '/user',
           classes: 'font-weight-normal',
           text: 'User',
           slug: 'user',

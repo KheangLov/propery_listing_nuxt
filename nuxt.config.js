@@ -1,7 +1,7 @@
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: 'Bedtimestories',
+    title: 'Prop-Listing',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -40,7 +40,7 @@ export default {
   },
 
   axios: {
-    baseURL: 'http://localhost:8000/api/v2',
+    baseURL: 'http://localhost:9900',
     credential: true,
   },
 
@@ -54,9 +54,10 @@ export default {
             propertyName: 'access_token'
           },
           user: {
-            url: 'user',
+            url: 'current-user',
             method: 'get',
             propertyName: false,
+            autoFetch: false,
           },
           logout: {
             url: 'user/logout',
@@ -90,6 +91,7 @@ export default {
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
+    '@nuxtjs/dotenv',
   ],
 
   module: {

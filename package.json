@@ -11,6 +11,7 @@
   "dependencies": {
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/dotenv": "^1.4.1",
     "add": "^2.0.6",
     "axios": "^0.20.0",
     "bootstrap-icons": "^1.7.1",

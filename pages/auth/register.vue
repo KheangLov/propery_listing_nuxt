@@ -10,13 +10,13 @@
         >
           <ValidationProvider
             v-slot="{ errors }"
-            name="firstname"
+            name="first_name"
             type="text"
             rules="required"
           >
             <b-form-input
               id="input-firstname"
-              v-model="form.firstname"
+              v-model="form.first_name"
               type="text"
               required
               placeholder="Enter firstname"
@@ -36,13 +36,13 @@
         >
           <ValidationProvider
             v-slot="{ errors }"
-            name="lastname"
+            name="last_name"
             type="text"
             rules="required"
           >
             <b-form-input
               id="input-lastname"
-              v-model="form.lastname"
+              v-model="form.last_name"
               type="text"
               required
               placeholder="Enter lastname"
@@ -72,6 +72,32 @@
               type="email"
               required
               placeholder="Enter email"
+              :class="errors.length ? 'border-danger' : ''"
+            >
+            </b-form-input>
+            <span v-if="errors.length" class="text-danger">
+              {{ errors[0] }}
+            </span>
+          </ValidationProvider>
+        </b-form-group>
+
+                <b-form-group
+          id="input-group-email"
+          label="Email"
+          label-for="input-email"
+        >
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="phone"
+            type="tel"
+            rules="required"
+          >
+            <b-form-input
+              id="input-phone"
+              v-model="form.phone"
+              type="tel"
+              required
+              placeholder="Enter phone"
               :class="errors.length ? 'border-danger' : ''"
             >
             </b-form-input>
@@ -136,17 +162,17 @@
         <b-button type="submit" block variant="outline-primary mt-4">Register</b-button>
       </b-form>
       <div class="text-center mt-2">
-        <b-link to="/auth/login">Go to login.</b-link>
+        <b-link href="/auth/login">Go to login.</b-link>
       </div>
     </ValidationObserver>
   </fragment>
 </template>
 
 <script>
-import Fragment from 'vue-fragment';
 import axios from 'axios';
 import Noty from 'noty';
 import { ValidationObserver, ValidationProvider } from "vee-validate";
+import { Fragment } from 'vue-fragment';
 
 export default {
   layout: 'auth',
@@ -158,14 +184,16 @@ export default {
   },
   data() {
     return {
-      form: {},
+      form: {
+        disabled: true,
+      },
       confimation: ''
     };
   },
   methods: {
-    handleSubmit: function() {
+    handleSubmit() {
       this.$refs.form.validate()
-        .then(success => {
+        .then(async success => {
           if (!success) {
             new Noty({
               text: 'Invild data!',
@@ -174,15 +202,18 @@ export default {
             }).show();
             return false;
           }
-          this.form.role_id = 3;
-          axios.post('http://localhost:1337/api/v1/register', this.form)
+
+          await axios.post(`${process.env.API_URL}/register`, this.form)
             .then(val => {
-              const { data: { message, data } } = val;
-              new Noty({
-                text: message,
-                type: data ? 'success' : 'error',
-                timeout: 2000
-              }).show();
+              const { data: { success: suc, data } } = val;
+              if (suc) {
+                new Noty({
+                  text: 'Success register',
+                  type: suc ? 'success' : 'error',
+                  timeout: 2000
+                }).show();
+              }
+
               this.form = {};
               this.confimation = '';
             })
