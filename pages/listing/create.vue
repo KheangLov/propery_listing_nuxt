@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <h4 class="title mb-4 text-uppercase">Create User</h4>
+    <h4 class="title mb-4 text-uppercase">Create Property</h4>
     <ValidationObserver ref="form">
       <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
         <b-row>

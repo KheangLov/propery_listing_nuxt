@@ -81,9 +81,9 @@
           </ValidationProvider>
         </b-form-group>
 
-                <b-form-group
+        <b-form-group
           id="input-group-email"
-          label="Email"
+          label="Phone"
           label-for="input-email"
         >
           <ValidationProvider
@@ -205,7 +205,7 @@ export default {
 
           await axios.post(`${process.env.API_URL}/register`, this.form)
             .then(val => {
-              const { data: { success: suc, data } } = val;
+              const { data: { success: suc } } = val;
               if (suc) {
                 new Noty({
                   text: 'Success register',
@@ -219,11 +219,12 @@ export default {
             })
             .catch(err => console.log(err));
 
-          this.$nextTick(() => {
-            this.$refs.form.reset();
-          });
+          this.$nextTick(() => this.$refs.form.reset());
         });
     }
+  },
+  mounted() {
+    console.log(process.env.API_URL);
   }
 }
 </script>

@@ -1,7 +1,7 @@
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: 'Prop-Listing',
+    title: 'P-LISTING',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -18,9 +18,6 @@ export default {
         integrity: "sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx",
         crossorigin: "anonymous"
       },
-      {
-        src: "http://127.0.0.1:8000/packages/select2/dist/js/select2.full.min.js"
-      }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -30,17 +27,11 @@ export default {
         integrity: "sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2",
         crossorigin: "anonymous"
       },
-      {
-        href: "http://127.0.0.1:8000/packages/select2/dist/css/select2.min.css"
-      },
-      {
-        href: "http://127.0.0.1:8000/packages/select2-bootstrap-theme/dist/select2-bootstrap.min.css"
-      }
     ]
   },
 
   axios: {
-    baseURL: 'http://localhost:9900',
+    baseURL: 'http://localhost:9800',
     credential: true,
   },
 
@@ -107,7 +98,10 @@ export default {
   modules: [
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
-    '@nuxtjs/auth'
+    '@nuxtjs/auth',
+    ['nuxt-gmaps', {
+      key: 'AIzaSyDil3fAJv-TSSv2OMEIu2fPl7bMfc8x5a0',
+    }]
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)

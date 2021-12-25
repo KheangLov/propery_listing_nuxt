@@ -3,7 +3,7 @@
     <b-link href="/user/create" class="btn btn-secondary mb-3">
       <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon>
       <span style="font-size: 18px;">
-        Add User
+        Add Property
       </span>
     </b-link>
 

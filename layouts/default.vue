@@ -1,16 +1,30 @@
 <template>
   <fragment>
     <b-navbar
-      type="dark"
-      variant="dark"
+      v-if="loggedInUser"
+      type="light"
+      variant="light"
       sticky
-      class="shadow-sm"
+      class="shadow-sm border-0 m-0"
       :class="isUserScrolling ? 'top-z-index' : ''"
     >
       <b-container fluid>
-        <b-navbar-brand to="/" class="font-weight-bold px-2">
-          Prop-Listing
+        <b-navbar-brand class="font-weight-bold px-2 text-white text-uppercase">
+          P-Listing
         </b-navbar-brand>
+        <b-navbar-nav>
+          <b-nav-item
+            v-for="({ link, classes, text, icon }, i) in navItems"
+            @click="handleActive"
+            :href="link"
+            link-classes="rounded-0 text-secondary"
+            :class="classes"
+            :key="i"
+          >
+            <b-icon :icon="icon" class="mr-2"></b-icon>
+            {{ text }}
+          </b-nav-item>
+        </b-navbar-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-item-dropdown
             right
@@ -46,36 +60,15 @@
         </b-navbar-nav>
       </b-container>
     </b-navbar>
-    <div class="d-flex content-wrapper">
-      <b-sidebar
-        title="Sidebar"
-        :visible="true"
-        :no-header="true"
-        shadow="sm"
-        width="240px"
-      >
-        <b-nav vertical pills>
-          <b-nav-item
-            v-for="({ link, classes, text, icon }, i) in navItems"
-            @click="handleActive"
-            :href="link"
-            link-classes="rounded-0 text-secondary"
-            :class="classes"
-            :key="i"
-          >
-            <b-icon :icon="icon" class="mr-2"></b-icon>
-            {{ text }}
-          </b-nav-item>
-        </b-nav>
-      </b-sidebar>
-      <b-container class="w-100 my-3 py-3">
+    <b-container fluid class="content-wrapper p-0">
+      <b-container class="my-4">
         <b-card
           class="border-0 shadow-sm"
         >
           <Nuxt />
         </b-card>
       </b-container>
-    </div>
+    </b-container>
   </fragment>
 </template>
 
@@ -107,14 +100,16 @@
       background-color: #6c757d !important;
     }
 
-    .b-sidebar-outer .b-sidebar .b-sidebar-body .nav-link {
-      padding: 1.2rem 2rem !important;
-      font-size: 16px !important;
-      font-weight: 600 !important;
-    }
+    .navbar .navbar-nav .nav-item.font-weight-normal {
 
-    .b-sidebar-outer .b-sidebar .b-sidebar-body .nav-link.active {
-      color: #fff !important;
+      &:hover, &:focus, &.active {
+        background-color: transparent !important;
+
+        .nav-link {
+          color: #545b62 !important;
+          opacity: 1.0 !important;
+        }
+      }
     }
 
     .navbar-light .navbar-nav .nav-item.active,
@@ -127,13 +122,9 @@
       display: none !important;
     }
 
-    .content-wrapper .b-sidebar-outer {
+    .content-wrapper .sidebar-menu {
       position: relative !important;
-    }
-
-    .content-wrapper .b-sidebar-outer .b-sidebar {
-      position: relative !important;
-
+      background-color: #fff !important;
     }
 
     .top-z-index {
@@ -145,18 +136,19 @@
     }
 
     .navbar-brand {
-      font-size: 1.75rem;
-      color: #777 !important;
+      font-size: 1.25rem;
+      color: #545b62 !important;
     }
 
     .custom-img {
       height: 32px;
     }
 
-    .navbar-light .navbar-nav .nav-link {
+    .navbar .navbar-nav .nav-item.font-weight-normal .nav-link {
       padding: 0;
       font-size: 18px;
-      color: #777 !important;
+      color: #545b62 !important;
+      opacity: 0.75 !important;
     }
 
     .navbar-light .navbar-nav .nav-item {
@@ -181,7 +173,7 @@ import _ from 'lodash';
 import { mapGetters } from 'vuex';
 
 export default {
-  middleware: 'auth',
+  middleware: 'authenticated',
   data() {
     return {
       isUserScrolling: false,
@@ -190,18 +182,18 @@ export default {
           link: '/',
           classes: 'font-weight-normal',
           text: 'Dashboard',
-          slug: 'dashboard',
+          slug: 'index',
           icon: 'x-diamond',
         },
         {
-          link: '/',
+          link: '/property',
           classes: 'font-weight-normal',
           text: 'Property',
           slug: 'property',
           icon: 'house',
         },
         {
-          link: '/',
+          link: '/listing',
           classes: 'font-weight-normal',
           text: 'Listing',
           slug: 'listing',
@@ -241,11 +233,9 @@ export default {
       this.navItems.forEach(val => val.classes = 'font-weight-normal');
     },
     handleActive() {
-      const vm = this;
       this.clearActive();
-      let index = _.findIndex(this.navItems, o => o.slug == vm.$nuxt.$route.name);
-      if (index < 0) index = 1;
-      this.navItems[index].classes += ' active';
+      let index = _.findIndex(this.navItems, o => o.slug == this.$nuxt.$route.name.split('-')[0]);
+      if (index >= 0) this.navItems[index].classes += ' active';
     }
   },
   mounted() {

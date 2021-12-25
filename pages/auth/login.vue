@@ -4,17 +4,17 @@
     <validation-observer ref="form">
       <b-form @submit.prevent="handleSubmit">
         <b-form-group
-          id="input-group-phone"
+          id="input-group-email"
           label="Email"
-          label-for="input-phone"
+          label-for="input-email"
         >
           <validation-provider
             v-slot="{ errors }"
-            name="phone"
+            name="email"
             rules="required"
           >
             <b-form-input
-              id="input-phone"
+              id="input-email"
               v-model="form.email"
               type="email"
               required
@@ -113,7 +113,15 @@ export default {
           //   });
 
           await this.$auth.loginWith('local', { data: this.form })
-            .then(res => console.log(res))
+            .then(({ status }) => {
+              if (status === 200) {
+                new Noty({
+                  text: `Welcome user <b>${this.loggedInUser.first_name} ${this.loggedInUser.last_name}</b>!`,
+                  type: 'success',
+                  timeout: 2000
+                }).show();
+              }
+            })
             .catch(err => {
               let message = 'Error!';
               if (err.response.data && err.response.data.errors) {

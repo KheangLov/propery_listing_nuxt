@@ -1,9 +1,9 @@
 <template>
   <fragment>
-    <b-link href="/user/create" class="btn btn-secondary mb-3">
+    <b-link href="/property/create" class="btn btn-secondary mb-3">
       <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon>
       <span style="font-size: 18px;">
-        Add User
+        Add Property
       </span>
     </b-link>
 
@@ -19,14 +19,40 @@
       <template #cell(index)="data">
         {{ data.index + 1 }}
       </template>
+      <template #cell(sale_list_price)="{ item: { sale_list_price } }">
+        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_list_price) }}
+      </template>
+      <template #cell(rent_list_price)="{ item: { rent_list_price } }">
+        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_list_price) }}
+      </template>
+      <template #cell(is_sale)="{ item: { is_sale } }">
+        <b-icon
+          :icon="is_sale ? 'check-circle' : 'circle'"
+          aria-hidden="true"
+        ></b-icon>
+      </template>
+      <template #cell(is_rent)="{ item: { is_rent } }">
+        <b-icon
+          :icon="is_rent ? 'check-circle' : 'circle'"
+          aria-hidden="true"
+        ></b-icon>
+      </template>
+      <template #cell(status)="{ item: { status } }">
+        <b-badge
+          :variant="status === 'pending' ? 'warning' : (status === 'property' ? 'success' : 'danger')"
+          class="text-uppercase p-2 text-white"
+        >
+          {{ status }}
+        </b-badge>
+      </template>
       <template #cell(actions)="{ item: { id } }">
-        <b-button variant="link" class="text-info p-0" :href="`user/${id}`">
+        <b-button variant="link" class="text-info p-0" :href="`/property/${id}`">
           <b-icon icon="eye" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button variant="link" class="text-info p-0" :href="`user/edit/${id}`">
+        <b-button variant="link" class="text-info p-0" :href="`/property/edit/${id}`">
           <b-icon icon="pencil-square" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button v-if="loggedInUser.id != id" variant="link" class="text-danger p-0" @click="handleDelete(id)">
+        <b-button variant="link" class="text-danger p-0" @click="handleDelete(id)">
           <b-icon icon="x-square" aria-hidden="true"></b-icon>
         </b-button>
       </template>
@@ -57,15 +83,16 @@ export default {
       }
     });
 
-    const items = await reqInstance.get(`${process.env.API_URL}/users`).then(val => val.data);
+    const items = await reqInstance.get(`${process.env.API_URL}/properties`).then(val => val.data);
     return {
       access_token,
       fields: [
         { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
-        { key: 'first_name', label: 'Firstname', sortable: true, sortDirection: 'desc' },
-        { key: 'last_name', label: 'Lastname', sortable: true },
-        { key: 'email', label: 'Email', sortable: true },
-        { key: 'phone', label: 'Phone', sortable: true },
+        { key: 'sale_list_price', label: 'Sale Price', sortable: true, sortDirection: 'desc' },
+        { key: 'rent_list_price', label: 'Rent Price', sortable: true },
+        { key: 'is_sale', label: 'Sale', sortable: true },
+        { key: 'is_rent', label: 'Rent', sortable: true },
+        { key: 'status', label: 'Status', sortable: true },
         { key: 'actions', label: 'Actions' }
       ],
       items,
@@ -83,7 +110,7 @@ export default {
         }
       });
 
-      reqInstance.delete(`${process.env.API_URL}/users/${id}`)
+      reqInstance.delete(`${process.env.API_URL}/properties/${id}`)
         .then(({ data: { message } }) => {
           if (message)
             new Noty({
