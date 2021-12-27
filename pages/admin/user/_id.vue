@@ -3,28 +3,43 @@
     <h4 class="title mb-4 text-uppercase">User Details</h4>
     <div class="content text-left">
       <div class="text-center mb-5">
-        <b-avatar
-          :src="entry.profile && entry.profile"
-          size="6rem"
-          class="mb-3"
-          :text="!entry.profile && `${entry.first_name[0]}${entry.last_name[0]}`"
-        ></b-avatar>
+        <div class="d-inline-block position-relative">
+          <b-avatar
+            :src="entry.profile && entry.profile"
+            size="6rem"
+            class="mb-3"
+            :text="!entry.profile && `${entry.first_name[0]}${entry.last_name[0]}`"
+          ></b-avatar>
+          <b-badge
+            class="position-absolute text-uppercase p-2"
+            :variant="!entry.disabled ? 'success' : 'danger'"
+            style="border-radius: 50%; bottom: 15%; right: 10%;"
+          >
+            <span class="d-none">{{ !entry.disabled ? "active" : "inactive"}}</span>
+          </b-badge>
+        </div>
       </div>
       <b-row>
         <b-col></b-col>
         <b-col>
           <p class="mb-3 text-muted d-flex justify-content-between">
-            <strong>Username</strong>
-            {{ entry.first_name }}
-            {{ entry.last_name }}
+            <strong class="mr-3">Username</strong>
+            <span>
+              {{ entry.first_name }}
+              {{ entry.last_name }}
+            </span>
           </p>
           <p class="mb-3 text-muted d-flex justify-content-between">
-            <strong>Email</strong>
-            {{ entry.email }}
+            <strong class="mr-3">Email</strong>
+            <span>
+              {{ entry.email }}
+            </span>
           </p>
           <p class="mb-3 text-muted d-flex justify-content-between">
-            <strong>Phone</strong>
-            {{ entry.phone }}
+            <strong class="mr-3">Phone</strong>
+            <span>
+              {{ entry.phone }}
+            </span>
           </p>
         </b-col>
         <b-col></b-col>
@@ -37,7 +52,6 @@
 import { mapGetters } from 'vuex';
 import { Fragment } from 'vue-fragment';
 import axios from 'axios';
-import Noty from 'noty';
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 
 export default {

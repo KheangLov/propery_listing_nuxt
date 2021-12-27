@@ -45,7 +45,7 @@
             </b-dropdown-item>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item
-              href="/profile"
+              href="/admin/profile"
             >
               Profile
             </b-dropdown-item>
@@ -179,28 +179,28 @@ export default {
       isUserScrolling: false,
       navItems: [
         {
-          link: '/',
+          link: '/admin',
           classes: 'font-weight-normal',
           text: 'Dashboard',
-          slug: 'index',
+          slug: 'admin',
           icon: 'x-diamond',
         },
         {
-          link: '/property',
+          link: '/admin/property',
           classes: 'font-weight-normal',
           text: 'Property',
           slug: 'property',
           icon: 'house',
         },
         {
-          link: '/listing',
+          link: '/admin/listing',
           classes: 'font-weight-normal',
           text: 'Listing',
           slug: 'listing',
           icon: 'list-check',
         },
         {
-          link: '/user',
+          link: '/admin/user',
           classes: 'font-weight-normal',
           text: 'User',
           slug: 'user',
@@ -225,6 +225,7 @@ export default {
   methods: {
     async logout() {
       await this.$auth.logout();
+      location.reload();
     },
     handleScroll() {
       this.isUserScrolling = (window.scrollY > 0);
@@ -234,7 +235,8 @@ export default {
     },
     handleActive() {
       this.clearActive();
-      let index = _.findIndex(this.navItems, o => o.slug == this.$nuxt.$route.name.split('-')[0]);
+      const route_split = this.$nuxt.$route.name.split('-');
+      let index = _.findIndex(this.navItems, o => o.slug == route_split[route_split.length - 1]);
       if (index >= 0) this.navItems[index].classes += ' active';
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <h2 class="text-center font-weight-bold text-primary">Login</h2>
+    <h2 class="text-center font-weight-bold text-secondary">Login</h2>
     <validation-observer ref="form">
       <b-form @submit.prevent="handleSubmit">
         <b-form-group
@@ -53,11 +53,10 @@
             </span>
           </validation-provider>
         </b-form-group>
-        <div class="text-center d-flex mx-auto justify-content-between">
-          <!-- <b-link to="/auth/login">Forgot password?</b-link> -->
-          <b-link href="/auth/register">Register</b-link>
+        <b-button type="submit" block variant="outline-secondary mt-4">Login</b-button>
+        <div class="text-center mt-2">
+          <b-link href="/auth/register" class="text-secondary">Not having an account?</b-link>
         </div>
-        <b-button type="submit" block variant="outline-primary mt-4">Login</b-button>
       </b-form>
     </validation-observer>
   </fragment>
@@ -96,22 +95,6 @@ export default {
           }
 
           const vm = this;
-          // await axios.post('http://localhost:9900/login', this.form)
-          //   .then(res => console.log(res))
-          //   .catch(err => {
-          //     let message = 'Error!';
-          //     if (err.response.data && err.response.data.errors) {
-          //       vm.$refs.form.setErrors(err.response.data.errors);
-          //       message = err.response.data.message;
-          //     }
-
-          //     new Noty({
-          //       text: message,
-          //       type: 'error',
-          //       timeout: 2000
-          //     }).show();
-          //   });
-
           await this.$auth.loginWith('local', { data: this.form })
             .then(({ status }) => {
               if (status === 200) {

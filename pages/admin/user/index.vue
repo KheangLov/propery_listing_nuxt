@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <b-link href="/user/create" class="btn btn-secondary mb-3">
+    <b-link href="/admin/user/create" class="btn btn-secondary mb-3">
       <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon>
       <span style="font-size: 18px;">
         Add User
@@ -19,11 +19,19 @@
       <template #cell(index)="data">
         {{ data.index + 1 }}
       </template>
+      <template #cell(disabled)="{ item: { disabled } }">
+        <b-badge
+          :variant="disabled ? 'danger' : 'success'"
+          class="text-uppercase p-2 text-white"
+        >
+          {{ disabled ? 'inactive' : 'active' }}
+        </b-badge>
+      </template>
       <template #cell(actions)="{ item: { id } }">
-        <b-button variant="link" class="text-info p-0" :href="`user/${id}`">
+        <b-button variant="link" class="text-info p-0" :href="`/admin/user/${id}`">
           <b-icon icon="eye" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button variant="link" class="text-info p-0" :href="`user/edit/${id}`">
+        <b-button variant="link" class="text-info p-0" :href="`/admin/user/edit/${id}`">
           <b-icon icon="pencil-square" aria-hidden="true"></b-icon>
         </b-button>
         <b-button v-if="loggedInUser.id != id" variant="link" class="text-danger p-0" @click="handleDelete(id)">
@@ -66,6 +74,7 @@ export default {
         { key: 'last_name', label: 'Lastname', sortable: true },
         { key: 'email', label: 'Email', sortable: true },
         { key: 'phone', label: 'Phone', sortable: true },
+        { key: 'disabled', label: 'Status', sortable: true },
         { key: 'actions', label: 'Actions' }
       ],
       items,

@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <h2 class="text-center font-weight-bold text-primary">Register</h2>
+    <h2 class="text-center font-weight-bold text-secondary">Register</h2>
     <ValidationObserver ref="form">
       <b-form @submit.prevent="handleSubmit">
         <b-form-group
@@ -159,10 +159,10 @@
           </ValidationProvider>
         </b-form-group>
 
-        <b-button type="submit" block variant="outline-primary mt-4">Register</b-button>
+        <b-button type="submit" block variant="outline-secondary mt-4">Register</b-button>
       </b-form>
       <div class="text-center mt-2">
-        <b-link href="/auth/login">Go to login.</b-link>
+        <b-link href="/auth/login" class="text-secondary">Go to login.</b-link>
       </div>
     </ValidationObserver>
   </fragment>

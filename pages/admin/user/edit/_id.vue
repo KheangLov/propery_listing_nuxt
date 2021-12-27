@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <h4 class="title mb-4 text-uppercase">Edit Property</h4>
+    <h4 class="title mb-4 text-uppercase">Edit User</h4>
     <b-tabs content-class="mt-3">
       <b-tab title="Info" active>
         <ValidationObserver ref="form">
@@ -133,7 +133,7 @@
 
             <div class="text-left mt-3">
               <b-button type="submit" variant="primary">Submit</b-button>
-              <b-link href="/user" class="btn btn-danger">Cancel</b-link>
+              <b-link href="/admin/user" class="btn btn-danger">Cancel</b-link>
             </div>
           </b-form>
         </ValidationObserver>
@@ -204,7 +204,7 @@
 
             <div class="text-left mt-3">
               <b-button type="submit" variant="primary">Submit</b-button>
-              <b-link href="/user" class="btn btn-danger">Cancel</b-link>
+              <b-link href="/admin/user" class="btn btn-danger">Cancel</b-link>
             </div>
           </b-form>
         </ValidationObserver>

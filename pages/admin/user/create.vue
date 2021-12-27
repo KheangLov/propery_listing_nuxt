@@ -194,7 +194,7 @@
 
         <div class="text-left mt-3">
           <b-button type="submit" variant="primary">Submit</b-button>
-          <b-link href="/user" class="btn btn-danger">Cancel</b-link>
+          <b-link href="/admin/user" class="btn btn-danger">Cancel</b-link>
         </div>
       </b-form>
     </ValidationObserver>
@@ -228,7 +228,6 @@ export default {
   },
   methods: {
     handleUpload(e) {
-      console.log(e.target.files[0]);
       const formData = new FormData();
       formData.append('file', e.target.files[0]);
       axios.post(`${process.env.API_URL}/upload_profile`, formData)
@@ -256,7 +255,7 @@ export default {
                   type: suc ? 'success' : 'error',
                   timeout: 2000
                 }).show();
-                setTimeout(() => window.location.href = '/user', 2000);
+                setTimeout(() => window.location.href = '/admin/user', 2000);
               }
 
               this.form = {};

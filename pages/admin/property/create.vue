@@ -144,24 +144,25 @@
 
           <b-col cols="6">
             <b-form-group
-              id="input-group-address"
-              label="Address"
-              label-for="input-address"
+              id="input-group-city"
+              label="City"
+              label-for="input-city"
             >
               <ValidationProvider
                 v-slot="{ errors }"
-                name="address"
+                name="city"
                 type="text"
                 rules="required"
               >
-                <b-form-input
-                  id="input-address"
-                  v-model="form.address"
-                  type="text"
-                  placeholder="Enter address"
-                  :class="errors.length ? 'border-danger' : ''"
+                <b-form-select
+                  :readonly="cities.length ? false : true"
+                  v-model="city"
+                  :options="cities"
                 >
-                </b-form-input>
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a city --</b-form-select-option>
+                  </template>
+                </b-form-select>
                 <span v-if="errors.length" class="text-danger">
                   {{ errors[0] }}
                 </span>
@@ -170,6 +171,90 @@
           </b-col>
 
           <b-col cols="6">
+            <b-form-group
+              id="input-group-district"
+              label="District"
+              label-for="input-district"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="district"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :disabled="districts.length ? false : true"
+                  v-model="district"
+                  :options="districts"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a district --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length" class="text-danger">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-commune"
+              label="Commune"
+              label-for="input-commune"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="commune"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :disabled="communes.length ? false : true"
+                  v-model="commune"
+                  :options="communes"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a commune --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length" class="text-danger">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-village"
+              label="Village"
+              label-for="input-village"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="village"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :disabled="villages.length ? false : true"
+                  v-model="village"
+                  :options="villages"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a village --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length" class="text-danger">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="12">
             <b-form-group
               id="input-group-full-address"
               label="Full Address"
@@ -351,7 +436,7 @@
               label="Image"
               label-for="input-image"
             >
-              <b-form-file id="input-image" accept="image/jpeg, image/png" @change="handleUpload">
+              <b-form-file id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
                 <template slot="file-name" slot-scope="{ names }">
                   <b-badge variant="dark">{{ names[0] }}</b-badge>
                   <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
@@ -381,7 +466,7 @@
 
         <div class="text-left mt-3">
           <b-button type="submit" variant="primary">Submit</b-button>
-          <b-link href="/property" class="btn btn-danger">Cancel</b-link>
+          <b-link href="/admin/property" class="btn btn-danger">Cancel</b-link>
         </div>
       </b-form>
     </ValidationObserver>
@@ -414,9 +499,30 @@ export default {
       location: {},
       loaded: false,
       marker: '',
+      address_code: null,
+      cities: [],
+      districts: [],
+      communes: [],
+      villages: [],
+      city: null,
+      district: null,
+      commune: null,
+      village: null,
     };
   },
   watch: {
+    city(val) {
+      this.setAddressCode(val);
+    },
+    district(val) {
+      this.setAddressCode(val);
+    },
+    commune(val) {
+      this.setAddressCode(val);
+    },
+    village(val) {
+      this.setAddressCode(val);
+    },
     form: {
       handler(val) {
         if (['land_length'] in val && ['land_width'] in val && val.land_length && val.land_width) {
@@ -429,6 +535,11 @@ export default {
     }
   },
   methods: {
+    setAddressCode(code) {
+      this.$set(this, 'address_code', code);
+      this.$set(this.form, 'address', this.address_code);
+      this.getAddress(this.address_code);
+    },
     addMarker({ event: { latLng } }) {
       this.$set(this, 'location', { lat: latLng.lat(), lng: latLng.lng() });
       this.location.visible = true;
@@ -445,7 +556,7 @@ export default {
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
       reader.onload = () => {
-        console.log(reader.result);
+        this.$set(this.form, 'image', reader.result);
       };
       reader.onerror = error => {
         console.log('Error: ', error);
@@ -493,6 +604,28 @@ export default {
           this.$nextTick(() => this.$refs.form.reset());
         });
     },
+    getAddress(code = '') {
+      const vm = this;
+      axios.get(`${process.env.API_URL}/kh_address?code=${code}`)
+        .then(res => {
+          let key = 'cities';
+
+          if (code.length === 2) {
+            key = 'districts';
+          } else if (code.length === 4) {
+            key = 'communes';
+          } else if (code.length === 6) {
+            key = 'villages';
+          } else if (code.length > 6) {
+            return false;
+          }
+
+          vm.$set(vm, key, res.data.map(({ code: c, name_en }) => ({ value: c, text: name_en })));
+        });
+    }
   },
+  mounted() {
+    this.getAddress();
+  }
 }
 </script>
