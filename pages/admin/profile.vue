@@ -6,7 +6,7 @@
         <div class="d-inline-block position-relative">
           <b-avatar
             :src="loggedInUser.profile && loggedInUser.profile"
-            size="6rem"
+            size="8rem"
             class="mb-3 position-relative"
             :text="!loggedInUser.profile && `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}`"
           >

@@ -2,7 +2,7 @@
   <fragment>
     <h4 class="title mb-4 text-uppercase">Property Details</h4>
     <div class="content text-left">
-      <b-row>
+      <b-row class="mb-3">
         <b-col>
           <p v-if="entry.is_sale" class="mb-3 text-muted d-flex justify-content-between">
             <strong class="mr-3">Sale</strong>
@@ -57,16 +57,16 @@
             </span>
           </p>
           <p class="mb-3 text-muted d-flex justify-content-between">
-            <strong class="mr-3">User</strong>
+            <strong class="mr-3">Owner</strong>
             <span>
-              {{ user.first_name }}
-              {{ user.last_name }}
+              {{ entry.user.first_name }}
+              {{ entry.user.last_name }}
             </span>
           </p>
           <p class="mb-3 text-muted d-flex justify-content-between">
             <strong class="mr-3">Status</strong>
             <b-badge
-              :variant="entry.status === 'pending' ? 'warning' : (entry.status === 'property' ? 'primary' : 'danger')"
+              :variant="['pending'].includes(entry.status) ? 'warning' : (entry.status === 'property' ? 'primary' : (entry.status === 'listing' ? 'success' : (entry.status === 'listing pending' ? 'info' : 'danger')))"
               class="text-uppercase p-2 text-white"
             >
               {{ entry.status }}
@@ -88,6 +88,13 @@
           </GMap>
         </b-col>
       </b-row>
+      <b-img
+        v-if="entry.image"
+        :src="`${url}/${entry.image}`"
+        fluid
+        alt="Image 1"
+      >
+      </b-img>
     </div>
   </fragment>
 </template>
@@ -115,6 +122,7 @@ export default {
         'Authorization': `Bearer ${access_token}`
       }
     });
+
     const entry = await reqInstance.get(`${process.env.API_URL}/properties/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
@@ -123,28 +131,17 @@ export default {
       access_token,
       entry,
       user: {},
-      address: ''
+      address: '',
+      url: process.env.API_URL
     };
   },
   methods: {
-    getUser() {
-      const reqInstance = axios.create({
-        headers: {
-          'Authorization': `Bearer ${this.access_token}`
-        }
-      });
-
-      reqInstance.get(`${process.env.API_URL}/users/${this.entry.user_id}`)
-        .then(val => this.$set(this, 'user', val.data))
-        .catch(err => console.log(err));
-    },
     getAddress(code) {
       axios.get(`${process.env.API_URL}/kh_address/${code}`)
         .then(({ data: { path_en } }) => this.$set(this, 'address', path_en.split(' / ').reverse().join(', ')));
     }
   },
   mounted() {
-    this.getUser();
     this.getAddress(this.entry.address);
   }
 }

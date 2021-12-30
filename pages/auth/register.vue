@@ -212,6 +212,7 @@ export default {
                   type: suc ? 'success' : 'error',
                   timeout: 2000
                 }).show();
+                setTimeout(() => window.location.href = '/auth/login', 2000);
               }
 
               this.form = {};

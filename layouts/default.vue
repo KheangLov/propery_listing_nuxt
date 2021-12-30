@@ -10,7 +10,7 @@
     >
       <b-container fluid>
         <b-navbar-brand class="font-weight-bold px-2 text-white text-uppercase">
-          P-Listing
+          <b-link href="/" class="text-secondary text-decoration-none">P-Listing</b-link>
         </b-navbar-brand>
         <b-navbar-nav>
           <b-nav-item
@@ -35,8 +35,8 @@
               #button-content
             >
               <b-avatar
-                :src="loggedInUser.profile && loggedInUser.profile"
-                :text="!loggedInUser.profile && `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}`"
+                :src="loggedInUser.profile ? loggedInUser.profile : ''"
+                :text="!loggedInUser.profile ? `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}` : ''"
               ></b-avatar>
             </template>
             <b-dropdown-item disabled>
@@ -47,6 +47,7 @@
             <b-dropdown-item
               href="/admin/profile"
             >
+              <b-icon icon="person" aria-hidden="true" class="mr-2"></b-icon>
               Profile
             </b-dropdown-item>
             <b-dropdown-item
@@ -54,20 +55,19 @@
               href="javascript:void(0)"
               @click="logout"
             >
+              <b-icon icon="arrow-left-circle" aria-hidden="true" class="mr-2"></b-icon>
               Logout
             </b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-container>
     </b-navbar>
-    <b-container fluid class="content-wrapper p-0">
-      <b-container class="my-4">
-        <b-card
-          class="border-0 shadow-sm"
-        >
-          <Nuxt />
-        </b-card>
-      </b-container>
+    <b-container class="content-wrapper py-4">
+      <b-card
+        class="border-0 shadow-sm"
+      >
+        <Nuxt />
+      </b-card>
     </b-container>
   </fragment>
 </template>
@@ -75,6 +75,19 @@
 <style lang="scss">
 
   #__nuxt {
+    overflow-x: hidden;
+
+    .table {
+      &.b-table {
+
+        tr {
+
+          td {
+            vertical-align: middle !important;
+          }
+        }
+      }
+    }
 
     .dropdown-menu li .dropdown-item {
       padding-top: 10px;
@@ -235,8 +248,9 @@ export default {
     },
     handleActive() {
       this.clearActive();
-      const route_split = this.$nuxt.$route.name.split('-');
-      let index = _.findIndex(this.navItems, o => o.slug == route_split[route_split.length - 1]);
+      const route_splits = this.$nuxt.$route.name.split('-');
+      const route = route_splits[1] ?? 'admin';
+      let index = _.findIndex(this.navItems, o => o.slug == route);
       if (index >= 0) this.navItems[index].classes += ' active';
     }
   },

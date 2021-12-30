@@ -179,7 +179,7 @@
               label="Profile"
               label-for="input-profile"
             >
-              <b-form-file id="input-profile" accept="image/jpeg, image/png" @change="handleUpload">
+              <b-form-file class="mb-3" id="input-profile" accept="image/jpeg, image/png" @change="handleUpload">
                 <template slot="file-name" slot-scope="{ names }">
                   <b-badge variant="dark">{{ names[0] }}</b-badge>
                   <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
@@ -187,14 +187,37 @@
                   </b-badge>
                 </template>
               </b-form-file>
+
+              <div class="w-100 text-center">
+                <b-avatar
+                  v-if="profile"
+                  :src="profile"
+                  size="10rem"
+                >
+                </b-avatar>
+              </div>
             </b-form-group>
           </b-col>
 
         </b-row>
 
         <div class="text-left mt-3">
-          <b-button type="submit" variant="primary">Submit</b-button>
-          <b-link href="/admin/user" class="btn btn-danger">Cancel</b-link>
+          <b-button type="submit" variant="primary">
+            <b-icon
+              icon="arrow-right-square"
+              aria-hidden="true"
+            >
+            </b-icon>
+            Submit
+          </b-button>
+          <b-link href="/admin/user" class="btn btn-danger">
+            <b-icon
+              icon="x-circle"
+              aria-hidden="true"
+            >
+            </b-icon>
+            Cancel
+          </b-link>
         </div>
       </b-form>
     </ValidationObserver>
@@ -224,15 +247,20 @@ export default {
         disabled: true,
       },
       confimation: '',
+      profile: '',
     };
   },
   methods: {
     handleUpload(e) {
-      const formData = new FormData();
-      formData.append('file', e.target.files[0]);
-      axios.post(`${process.env.API_URL}/upload_profile`, formData)
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => {
+        this.$set(this, 'profile', reader.result);
+        this.$set(this.form, 'profile', reader.result.split('base64,')[1]);
+      };
+      reader.onerror = error => {
+        console.log('Error: ', error);
+      };
     },
     handleSubmit() {
       this.$refs.form.validate()

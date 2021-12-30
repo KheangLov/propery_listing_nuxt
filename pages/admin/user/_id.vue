@@ -6,7 +6,7 @@
         <div class="d-inline-block position-relative">
           <b-avatar
             :src="entry.profile && entry.profile"
-            size="6rem"
+            size="8rem"
             class="mb-3"
             :text="!entry.profile && `${entry.first_name[0]}${entry.last_name[0]}`"
           ></b-avatar>

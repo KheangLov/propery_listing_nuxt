@@ -18,6 +18,7 @@
             v-model="filter"
             type="search"
             placeholder="Type to Search"
+            style="min-height: 41px;"
           ></b-form-input>
         </b-input-group>
       </b-form-group>
@@ -35,6 +36,15 @@
     >
       <template #cell(index)="data">
         {{ data.index + 1 }}
+      </template>
+      <template #cell(image)="{ item: { image } }">
+        <b-img
+          :src="image ? `${url}/${image}` : 'https://picsum.photos/250/250/?image=58'"
+          width="50"
+          height="50"
+          style="object-fit: cover; border-radius: 0.5rem;"
+          :alt="image"
+        ></b-img>
       </template>
       <template #cell(id)="{ item: { id } }">
         {{ id.toString().padStart(6, '0') }}
@@ -59,11 +69,15 @@
       </template>
       <template #cell(status)="{ item: { status } }">
         <b-badge
-          :variant="status === 'pending' ? 'warning' : (status === 'property' ? 'primary' : 'danger')"
+          :variant="['pending'].includes(status) ? 'warning' : (status === 'property' ? 'primary' : (status === 'listing' ? 'success' : (status === 'listing pending' ? 'info' : 'danger')))"
           class="text-uppercase p-2 text-white"
         >
           {{ status }}
         </b-badge>
+      </template>
+      <template #cell(user)="{ item: { user } }">
+        {{ user.first_name }}
+        {{ user.last_name }}
       </template>
       <template #cell(created_at)="{ item: { created_at } }">
         {{ formatData(created_at) }}
@@ -71,12 +85,14 @@
       <template #cell(updated_at)="{ item: { updated_at } }">
         {{ formatData(updated_at) }}
       </template>
-      <template #cell(actions)="{ item: { id, status, sale_list_price, rent_list_price } }">
+      <template #cell(actions)="{ item: { id, status, is_sale, is_rent, sale_list_price, rent_list_price } }">
         <b-button
           v-if="['property'].includes(status)"
           variant="link"
           class="text-primary p-0 mr-2"
           @click="modalAction($bvModal, { id, sale_list_price, rent_list_price })"
+          v-b-tooltip.hover
+          title="Convert to listing"
         >
           <b-icon icon="arrow-repeat" aria-hidden="true"></b-icon>
         </b-button>
@@ -89,7 +105,7 @@
           <ValidationObserver ref="form">
             <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
               <b-row>
-                <b-col cols="6">
+                <b-col cols="6" v-if="is_sale">
                   <b-form-group
                     id="input-group-sale-price"
                     label="Sale Price"
@@ -116,7 +132,7 @@
                   </b-form-group>
                 </b-col>
 
-                <b-col cols="6">
+                <b-col cols="6" v-if="is_rent">
                   <b-form-group
                     id="input-group-rent-price"
                     label="Rent Price"
@@ -146,19 +162,79 @@
             </b-form>
           </ValidationObserver>
         </b-modal>
-        <b-button v-if="!['reject', 'property'].includes(status)" variant="link" class="text-success p-0 mr-2" @click="updateStatus(id, 'property')">
+        <b-button
+          v-if="!['reject', 'property', 'listing pending', 'listing'].includes(status)"
+          variant="link"
+          class="text-success p-0 mr-2"
+          @click="updateStatus(id, 'property')"
+          v-b-tooltip.hover
+          title="Approved"
+        >
           <b-icon icon="check2" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button v-if="!['reject'].includes(status)" variant="link" class="text-danger p-0 mr-2" @click="updateStatus(id, 'reject')">
+        <b-button
+          v-if="!['reject', 'listing pending', 'listing'].includes(status)"
+          variant="link"
+          class="text-danger p-0 mr-2"
+          @click="modalRejectAction($bvModal, { id, sale_list_price, rent_list_price })"
+          v-b-tooltip.hover
+          title="Reject"
+        >
           <b-icon icon="arrow-counterclockwise" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button variant="link" class="text-secondary p-0 mr-2" :href="`/admin/property/${id}`">
+        <b-modal
+          :id="`modal-reject-${id}`"
+          centered
+          title="REJECT REASONS"
+          @ok="updateStatus(id, 'reject')"
+        >
+          <ValidationObserver ref="form">
+            <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
+              <b-row>
+                <b-col
+                  v-for="(f, k) in field_datas"
+                  cols="6"
+                  :key="k"
+                >
+                  <b-form-checkbox
+                    v-model="check_fields"
+                    :value="f"
+                    class="text-capitalize"
+                  >
+                    {{ f.replace(/_/g, ' ') }}
+                  </b-form-checkbox>
+                </b-col>
+              </b-row>
+            </b-form>
+          </ValidationObserver>
+        </b-modal>
+        <b-button
+          variant="link"
+          class="text-secondary p-0 mr-2"
+          :href="`/admin/property/${id}`"
+          v-b-tooltip.hover
+          title="View"
+        >
           <b-icon icon="eye" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button variant="link" class="text-info p-0 mr-2" :href="`/admin/property/edit/${id}`">
+        <b-button
+          v-if="!['listing'].includes(status)"
+          variant="link"
+          class="text-info p-0 mr-2"
+          :href="`/admin/property/edit/${id}`"
+          v-b-tooltip.hover
+          title="Edit"
+        >
           <b-icon icon="pencil-square" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button variant="link" class="text-danger p-0" @click="handleDelete(id)">
+        <b-button
+          v-if="!['property', 'listing pending', 'listing'].includes(status)"
+          variant="link"
+          class="text-danger p-0"
+          @click="handleDelete(id)"
+          v-b-tooltip.hover
+          title="Delete"
+        >
           <b-icon icon="x-square" aria-hidden="true"></b-icon>
         </b-button>
       </template>
@@ -198,12 +274,14 @@ export default {
       access_token,
       fields: [
         { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
+        { key: 'image', label: 'Image' },
         { key: 'id', label: 'Property Code', sortable: true, sortDirection: 'desc' },
         { key: 'sale_list_price', label: 'Sale Price', sortable: true, sortDirection: 'desc' },
         { key: 'rent_list_price', label: 'Rent Price', sortable: true },
         { key: 'is_sale', label: 'Sale', sortable: true },
         { key: 'is_rent', label: 'Rent', sortable: true },
         { key: 'status', label: 'Status', sortable: true },
+        { key: 'user', label: 'Owner', sortable: true },
         { key: 'created_at', label: 'Created At', sortable: true },
         { key: 'updated_at', label: 'Updated At', sortable: true },
         { key: 'actions', label: 'Actions' }
@@ -214,12 +292,36 @@ export default {
       sortDirection: 'asc',
       filter: null,
       form: {},
+      url: process.env.API_URL,
+      check_fields: [],
+      field_datas: [
+        'sale_list_price',
+        'rent_list_price',
+        'street_no',
+        'house_no',
+        'city',
+        'district',
+        'commune',
+        'village',
+        'full_address',
+        'latitude',
+        'longitude',
+        'land_width',
+        'land_length',
+        'land_area',
+        'description',
+        'image',
+        'user_id',
+      ]
     };
   },
   methods: {
     modalAction(modal, form) {
       modal.show(`modal-convert-listing-${form.id}`);
       this.$set(this, 'form', form);
+    },
+    modalRejectAction(modal, form) {
+      modal.show(`modal-reject-${form.id}`);
     },
     handleOk() {
       const reqInstance = axios.create({
@@ -229,23 +331,33 @@ export default {
       });
       const { id: property_id, sale_list_price: sale_price, rent_list_price: rent_price } = this.form;
       reqInstance.post(`${process.env.API_URL}/listings`, { property_id, sale_price, rent_price })
-        .then(() => {
+        .then(({ data: { data: { status } } }) => {
           new Noty({
             text: 'Property successfully converted to listing!',
             type: 'success',
             timeout: 2000
           }).show();
+          const index = _.findIndex(this.items, ['id', property_id]);
+          if (index > -1) {
+            this.items[index].status = status === 'inactive' ? 'listing pending' : 'listing';
+          }
         })
         .catch(err => console.log(err));
     },
     updateStatus(id, status) {
+      const vm = this;
       const reqInstance = axios.create({
         headers: {
           'Authorization': `Bearer ${this.access_token}`
         }
       });
-      reqInstance.put(`${process.env.API_URL}/properties/${id}`, { status })
-        .then(() => {
+      const param = { status };
+      if (status === 'reject') {
+        param.reason = JSON.stringify(this.check_fields);
+      }
+
+      reqInstance.put(`${process.env.API_URL}/properties/${id}`, param)
+        .then(async () => {
           new Noty({
             text: status === 'property' ? 'Property approved' : 'Property rejected',
             type: status === 'property' ? 'success' : 'error',
@@ -254,7 +366,8 @@ export default {
 
           const index = _.findIndex(this.items, ['id', id]);
           if (index > -1) {
-            this.items[index].status = status;
+            await reqInstance.get(`${process.env.API_URL}/properties/${id}`)
+              .then(({ data: { status: s } }) => vm.items[index].status = s);
           }
         })
         .catch(err => console.log(err));

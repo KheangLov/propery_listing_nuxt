@@ -342,6 +342,7 @@
               class="mb-3"
               ref="gMap"
               language="en"
+              :options="{ mapTypeId: 'hybrid' }"
               :center="{lat: 11.5760393, lng: 104.9230512}"
               :zoom="11"
               @click="addMarker($event)"
@@ -432,11 +433,28 @@
 
           <b-col cols="6">
             <b-form-group
+              id="input-group-user"
+              label="User"
+              label-for="input-user"
+            >
+              <b-form-select
+                v-model="form.user_id"
+                :options="users.map(({ first_name, last_name, id }) => ({ value: id, text: `${first_name} ${last_name}` }))"
+              >
+                <template #first>
+                  <b-form-select-option :value="null" disabled>-- Please select a user --</b-form-select-option>
+                </template>
+              </b-form-select>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
               id="input-group-image"
               label="Image"
               label-for="input-image"
             >
-              <b-form-file id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
+              <b-form-file class="mb-3" id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
                 <template slot="file-name" slot-scope="{ names }">
                   <b-badge variant="dark">{{ names[0] }}</b-badge>
                   <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
@@ -444,29 +462,62 @@
                   </b-badge>
                 </template>
               </b-form-file>
+              <div class="w-100 text-right">
+                <b-img
+                  v-if="image"
+                  :src="image"
+                  fluid
+                  alt="Image 1"
+                ></b-img>
+              </div>
             </b-form-group>
           </b-col>
 
           <b-col cols="12">
-            <b-form-group
-              id="input-group-desc"
-              label="Description"
-              label-for="input-desc"
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="description"
+              type="text"
+              rules="required"
             >
-              <b-form-textarea
-                id="input-desc"
-                v-model="form.description"
-                placeholder="Enter description"
-                rows="3"
-                max-rows="6"
-              ></b-form-textarea>
-            </b-form-group>
+              <b-form-group
+                id="input-group-desc"
+                label="Description"
+                label-for="input-desc"
+              >
+                <b-form-textarea
+                  id="input-desc"
+                  v-model="form.description"
+                  placeholder="Enter description"
+                  :class="errors.length ? 'border-danger' : ''"
+                  rows="3"
+                  max-rows="6"
+                ></b-form-textarea>
+                <span v-if="errors.length" class="text-danger">
+                  {{ errors[0] }}
+                </span>
+              </b-form-group>
+            </ValidationProvider>
           </b-col>
         </b-row>
 
         <div class="text-left mt-3">
-          <b-button type="submit" variant="primary">Submit</b-button>
-          <b-link href="/admin/property" class="btn btn-danger">Cancel</b-link>
+          <b-button type="submit" variant="primary">
+            <b-icon
+              icon="arrow-right-square"
+              aria-hidden="true"
+            >
+            </b-icon>
+            Submit
+          </b-button>
+          <b-link href="/admin/property" class="btn btn-danger">
+            <b-icon
+              icon="x-circle"
+              aria-hidden="true"
+            >
+            </b-icon>
+            Cancel
+          </b-link>
         </div>
       </b-form>
     </ValidationObserver>
@@ -490,11 +541,20 @@ export default {
   computed: {
     ...mapGetters(['loggedInUser'])
   },
-  asyncData(context) {
+  async asyncData(context) {
     const access_token = context.store.state.auth.user.access_token;
+    const reqInstance = axios.create({
+      headers: {
+        'Authorization': `Bearer ${context.store.state.auth.user.access_token}`
+      }
+    });
+
+    const users = await reqInstance.get(`${process.env.API_URL}/users`).then(val => val.data);
     return {
       access_token,
-      form: {},
+      form: {
+        user_id: null,
+      },
       currentLocation: {},
       location: {},
       loaded: false,
@@ -508,6 +568,8 @@ export default {
       district: null,
       commune: null,
       village: null,
+      image: '',
+      users,
     };
   },
   watch: {
@@ -556,7 +618,8 @@ export default {
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
       reader.onload = () => {
-        this.$set(this.form, 'image', reader.result);
+        this.$set(this, 'image', reader.result);
+        this.$set(this.form, 'image', reader.result.split('base64,')[1]);
       };
       reader.onerror = error => {
         console.log('Error: ', error);
@@ -589,17 +652,20 @@ export default {
                   type: suc ? 'success' : 'error',
                   timeout: 2000
                 }).show();
-                setTimeout(() => window.location.href = '/property', 2000);
+                setTimeout(() => window.location.href = '/admin/property', 2000);
               }
 
               this.form = {};
               this.confimation = '';
             })
-            .catch(err => new Noty({
-              text: "We've got some error during request",
-              type: suc ? 'success' : 'error',
-              timeout: 2000
-            }).show());
+            .catch(err =>{
+              new Noty({
+                text: "We've got some error during request",
+                type: suc ? 'success' : 'error',
+                timeout: 2000
+              }).show();
+              this.$set(this, 'button_loaded', true);
+            });
 
           this.$nextTick(() => this.$refs.form.reset());
         });

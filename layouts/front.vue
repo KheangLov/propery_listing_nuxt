@@ -4,11 +4,11 @@
       type="dark"
       variant="info"
       sticky
-      class="shadow-sm border-0 m-0"
+      class="shadow border-0 m-0"
     >
       <b-container>
         <b-navbar-brand class="front font-weight-bold px-2 text-white text-uppercase">
-          <b-link href="/" class="text-white text-decoration-none">P-Listing</b-link>
+          <b-link href="/" class="text-white text-decoration-none" style="font-size: 26px;">P-Listing</b-link>
         </b-navbar-brand>
         <b-navbar-nav class="ml-auto">
           <!-- <span class="text-white" v-if="date && time">
@@ -31,10 +31,8 @@
         </b-navbar-nav>
       </b-container>
     </b-navbar>
-    <b-container fluid class="content-wrapper p-0">
-      <b-container class="my-4">
-        <Nuxt />
-      </b-container>
+    <b-container class="content-wrapper p-0 my-4">
+      <Nuxt />
     </b-container>
   </fragment>
 </template>

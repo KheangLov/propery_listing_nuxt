@@ -1,6 +1,17 @@
 <template>
-  <fragment>
+  <div>
     <h4 class="title mb-4 text-uppercase">Edit Property</h4>
+    <b-alert show variant="warning" v-if="reasons.length" class="mb-4">
+      <h4 class="alert-heading">Warning!</h4>
+      <p>
+        There was some problems with this property, please recheck this following errors fields and update it.
+      </p>
+      <hr>
+      <p class="mb-0">
+        <strong>Note:</strong>
+        **must update all
+      </p>
+    </b-alert>
     <ValidationObserver ref="form">
       <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
         <b-row>
@@ -52,8 +63,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('sale_list_price')" class="text-danger">
+                  {{ reasons.includes('sale_list_price') ? 'Invild sale price' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -80,8 +91,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('rent_list_price')" class="text-danger">
+                  {{ reasons.includes('rent_list_price') ? 'Invild rent price' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -108,8 +119,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('street_no')" class="text-danger">
+                  {{ reasons.includes('street_no') ? 'Invalid street no' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -135,8 +146,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('house_no')" class="text-danger">
+                  {{ reasons.includes('house_no') ? 'Invalid house no' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -163,8 +174,8 @@
                     <b-form-select-option :value="null" disabled>-- Please select a city --</b-form-select-option>
                   </template>
                 </b-form-select>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('city')" class="text-danger">
+                  {{ reasons.includes('city') ? 'Invalid city' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -191,8 +202,8 @@
                     <b-form-select-option :value="null" disabled>-- Please select a district --</b-form-select-option>
                   </template>
                 </b-form-select>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('district')" class="text-danger">
+                  {{ reasons.includes('district') ? 'Invalid district' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -219,8 +230,8 @@
                     <b-form-select-option :value="null" disabled>-- Please select a commune --</b-form-select-option>
                   </template>
                 </b-form-select>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('commune')" class="text-danger">
+                  {{ reasons.includes('commune') ? 'Invalid commune' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -247,8 +258,8 @@
                     <b-form-select-option :value="null" disabled>-- Please select a village --</b-form-select-option>
                   </template>
                 </b-form-select>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('village')" class="text-danger">
+                  {{ reasons.includes('village') ? 'Invalid village' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -274,8 +285,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('full_address')" class="text-danger">
+                  {{ reasons.includes('full_address') ? 'Invalid full address' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -302,8 +313,8 @@
                   readonly
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('latitude')" class="text-danger">
+                  {{ reasons.includes('latitude') ? 'Invalid latitude' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -330,8 +341,8 @@
                   readonly
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('longitude')" class="text-danger">
+                  {{ reasons.includes('longitude') ? 'Invalid longitude' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -343,12 +354,11 @@
               ref="gMap"
               language="en"
               :center="{ lat: form.latitude, lng: form.longitude }"
+              :options="{ mapTypeId: 'hybrid' }"
               :zoom="11"
               @click="addMarker($event)"
+              @loaded="markerAdd({ lat: form.latitude, lng: form.longitude })"
             >
-              <GMapMarker
-                :position="{ lat: form.latitude, lng: form.longitude }"
-              />
             </GMap>
           </b-col>
 
@@ -372,8 +382,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('land_width')" class="text-danger">
+                  {{ reasons.includes('land_width') ? 'Invalid width' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -399,8 +409,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('land_length')" class="text-danger">
+                  {{ reasons.includes('land_length') ? 'Invalid length' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -426,8 +436,8 @@
                   :class="errors.length ? 'border-danger' : ''"
                 >
                 </b-form-input>
-                <span v-if="errors.length" class="text-danger">
-                  {{ errors[0] }}
+                <span v-if="errors.length || reasons.includes('land_area')" class="text-danger">
+                  {{ reasons.includes('land_area') ? 'Invalid area' : errors[0] }}
                 </span>
               </ValidationProvider>
             </b-form-group>
@@ -435,11 +445,39 @@
 
           <b-col cols="6">
             <b-form-group
+              id="input-group-user"
+              label="User"
+              label-for="input-user"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="user"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  v-model="form.user_id"
+                  :options="users.map(({ first_name, last_name, id }) => ({ value: id, text: `${first_name} ${last_name}` }))"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a user --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length || reasons.includes('user_id')" class="text-danger">
+                  {{ reasons.includes('user_id') ? 'Invalid user' : errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+
+          <b-col cols="6">
+            <b-form-group
               id="input-group-image"
               label="Image"
               label-for="input-image"
             >
-              <b-form-file id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
+              <b-form-file class="mb-3" id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
                 <template slot="file-name" slot-scope="{ names }">
                   <b-badge variant="dark">{{ names[0] }}</b-badge>
                   <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
@@ -447,33 +485,67 @@
                   </b-badge>
                 </template>
               </b-form-file>
+              <b-img
+                v-if="image"
+                :src="image.includes('base64,') ? image : `${url}/${image}`"
+                fluid
+                alt="Image 1"
+              >
+              </b-img>
+              <span v-if="reasons.includes('image')" class="text-danger">
+                {{ reasons.includes('image') && 'Invalid image' }}
+              </span>
             </b-form-group>
           </b-col>
 
           <b-col cols="12">
-            <b-form-group
-              id="input-group-desc"
-              label="Description"
-              label-for="input-desc"
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="description"
+              type="text"
+              rules="required"
             >
-              <b-form-textarea
-                id="input-desc"
-                v-model="form.description"
-                placeholder="Enter description"
-                rows="3"
-                max-rows="6"
-              ></b-form-textarea>
-            </b-form-group>
+              <b-form-group
+                id="input-group-desc"
+                label="Description"
+                label-for="input-desc"
+              >
+                <b-form-textarea
+                  id="input-desc"
+                  v-model="form.description"
+                  placeholder="Enter description"
+                  rows="3"
+                  max-rows="6"
+                ></b-form-textarea>
+                <span v-if="errors.length || reasons.includes('description')" class="text-danger">
+                  {{ reasons.includes('description') ? 'Invalid description' : errors[0] }}
+                </span>
+              </b-form-group>
+            </ValidationProvider>
           </b-col>
         </b-row>
 
         <div class="text-left mt-3">
-          <b-button type="submit" variant="primary">Submit</b-button>
-          <b-link href="/admin/property" class="btn btn-danger">Cancel</b-link>
+          <b-button type="submit" variant="primary" :disabled="!button_loaded || reasons.length ? true : false">
+            <b-icon
+              icon="arrow-right-square"
+              aria-hidden="true"
+            >
+            </b-icon>
+            Submit
+          </b-button>
+          <b-link href="/admin/property" class="btn btn-danger">
+            <b-icon
+              icon="x-circle"
+              aria-hidden="true"
+            >
+            </b-icon>
+            Cancel
+          </b-link>
         </div>
       </b-form>
     </ValidationObserver>
-  </fragment>
+  </div>
 </template>
 
 <script>
@@ -503,13 +575,26 @@ export default {
     const form = await reqInstance.get(`${process.env.API_URL}/properties/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
+
+    const users = await reqInstance.get(`${process.env.API_URL}/users`).then(val => val.data);
+    const reasons = form.reason ? JSON.parse(form.reason) : [];
+    form.reason = '';
     return {
+      button_loaded: true,
+      reasons,
       access_token,
-      form,
+      origin_form: {
+        ...form,
+        user_id: form.user.id,
+      },
+      form: {
+        ...form,
+        user_id: form.user.id,
+      },
       currentLocation: {},
       location: {},
       loaded: false,
-      marker: '',
+      marker: null,
       address_code: form.address,
       cities: [],
       districts: [],
@@ -519,6 +604,9 @@ export default {
       district: null,
       commune: null,
       village: null,
+      image: form.image,
+      url: process.env.API_URL,
+      users,
     };
   },
   watch: {
@@ -541,15 +629,29 @@ export default {
         } else {
           this.$set(this.form, 'land_area', '');
         }
+
+        this.$set(this, 'reasons', this.reasons.filter(f => this.form[f] == this.origin_form[f]));
       },
       deep: true,
-    }
+    },
   },
   methods: {
     setAddressCode(code) {
       this.$set(this, 'address_code', code);
       this.$set(this.form, 'address', this.address_code);
       this.getAddress(this.address_code);
+    },
+    markerAdd(latLng) {
+      this.$set(this, 'location', latLng);
+      this.location.visible = true;
+      if (this.marker) {
+        this.marker.setMap(null);
+      }
+      this.marker = new google.maps.Marker({
+          position: latLng,
+          map: this.$refs.gMap.map,
+      });
+      this.$set(this, 'form', { ...this.form, latitude: latLng.lat, longitude: latLng.lng })
     },
     addMarker({ event: { latLng } }) {
       this.$set(this, 'location', { lat: latLng.lat(), lng: latLng.lng() });
@@ -567,7 +669,8 @@ export default {
       const reader = new FileReader();
       reader.readAsDataURL(e.target.files[0]);
       reader.onload = () => {
-        this.$set(this.form, 'image', reader.result);
+        this.$set(this, 'image', reader.result);
+        this.$set(this.form, 'image', reader.result.split('base64,')[1]);
       };
       reader.onerror = error => {
         console.log('Error: ', error);
@@ -575,6 +678,7 @@ export default {
     },
     handleSubmit() {
       const vm = this;
+      this.$set(this, 'button_loaded', false);
       this.$refs.form.validate()
         .then(async success => {
           if (!success) {
@@ -592,7 +696,8 @@ export default {
             }
           });
 
-          this.form.status = 'pending';
+          this.form.status = '';
+          this.form.reason = JSON.stringify(this.reasons);
           await reqInstance.put(`${process.env.API_URL}/properties/${vm.$route.params.id}`, this.form)
             .then(val => {
               const { data: { success: suc } } = val;
@@ -602,16 +707,19 @@ export default {
                   type: suc ? 'success' : 'error',
                   timeout: 2000
                 }).show();
+                this.$nextTick(() => this.$refs.form.reset());
                 setTimeout(() => window.location.href = '/admin/property', 2000);
               }
             })
-            .catch(err => new Noty({
-              text: "We've got some error during request",
-              type: 'error',
-              timeout: 2000
-            }).show());
-
-          this.$nextTick(() => this.$refs.form.reset());
+            .catch(err => {
+              vm.$set(vm, 'loaded', false);
+              new Noty({
+                text: "We've got some error during request",
+                type: 'error',
+                timeout: 2000
+              }).show();
+              this.$set(this, 'button_loaded', true);
+            });
         });
     },
     getAddress(code = '') {
@@ -638,7 +746,7 @@ export default {
 
           vm.$set(vm, key, res.data.map(({ code: c, name_en }) => ({ value: c, text: name_en })));
         });
-    }
+    },
   },
   async created() {
     await this.getAddress();

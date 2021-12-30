@@ -29,6 +29,9 @@
       <template #cell(id)="{ item: { id } }">
         {{ id.toString().padStart(6, '0') }}
       </template>
+      <template #cell(property_id)="{ item: { property: { id } } }">
+        {{ id.toString().padStart(6, '0') }}
+      </template>
       <template #cell(sale_price)="{ item: { sale_price } }">
         {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price) }}
       </template>
@@ -50,14 +53,46 @@
         {{ formatData(updated_at) }}
       </template>
       <template #cell(actions)="{ item: { id, status } }">
-        <b-button v-if="!['active'].includes(status)" variant="link" class="text-success p-0 mr-2" @click="updateStatus(id, 'active')">
-          <b-icon icon="check2" aria-hidden="true"></b-icon>
+        <b-button
+          v-if="!['active'].includes(status)"
+          variant="link"
+          class="text-success p-0 mr-2"
+          @click="updateStatus(id, 'active')"
+          v-b-tooltip.hover
+          title="Approve"
+        >
+          <b-icon
+            icon="check2"
+            aria-hidden="true"
+          >
+          </b-icon>
         </b-button>
-        <b-button v-else variant="link" class="text-danger p-0 mr-2" @click="updateStatus(id, 'inactive')">
-          <b-icon icon="arrow-counterclockwise" aria-hidden="true"></b-icon>
+        <b-button
+          v-else
+          variant="link"
+          class="text-danger p-0 mr-2"
+          @click="updateStatus(id, 'inactive')"
+          v-b-tooltip.hover
+          title="Reject"
+        >
+          <b-icon
+            icon="arrow-counterclockwise"
+            aria-hidden="true"
+          >
+          </b-icon>
         </b-button>
-        <b-button variant="link" class="text-info p-0" :href="`listing/${id}`">
-          <b-icon icon="eye" aria-hidden="true"></b-icon>
+        <b-button
+          variant="link"
+          class="text-info p-0"
+          :href="`listing/${id}`"
+          v-b-tooltip.hover
+          title="Edit"
+        >
+          <b-icon
+            icon="eye"
+            aria-hidden="true"
+          >
+          </b-icon>
         </b-button>
       </template>
     </b-table>
@@ -94,6 +129,7 @@ export default {
       fields: [
         { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
         { key: 'id', label: 'Listing Code', sortable: true, sortDirection: 'desc' },
+        { key: 'property_id', label: 'Property Code', sortable: true, sortDirection: 'desc' },
         { key: 'sale_price', label: 'Sale Price', sortable: true },
         { key: 'rent_price', label: 'Rent Price', sortable: true },
         { key: 'status', label: 'Status', sortable: true, sortDirection: 'desc' },
@@ -126,16 +162,23 @@ export default {
       }
 
       reqInstance.put(`${process.env.API_URL}/listings/${id}`, form)
-        .then(() => {
-          new Noty({
-            text: status === 'active' ? 'Listing approved' : 'Listing rejected',
-            type: status === 'active' ? 'success' : 'error',
-            timeout: 2000
-          }).show();
-
-          const index = _.findIndex(this.items, ['id', id]);
-          if (index > -1) {
-            this.items[index].status = status;
+        .then(({ data: { success, message} }) => {
+          if (success) {
+            new Noty({
+              text: status === 'active' ? 'Listing approved' : 'Listing rejected',
+              type: status === 'active' ? 'success' : 'error',
+              timeout: 2000
+            }).show();
+            const index = _.findIndex(this.items, ['id', id]);
+            if (index > -1) {
+              this.items[index].status = status;
+            }
+          } else {
+            new Noty({
+              text: message,
+              type: 'error',
+              timeout: 2000
+            }).show();
           }
         })
         .catch(err => console.log(err));

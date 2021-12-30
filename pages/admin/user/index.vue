@@ -1,11 +1,28 @@
 <template>
   <fragment>
-    <b-link href="/admin/user/create" class="btn btn-secondary mb-3">
-      <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon>
-      <span style="font-size: 18px;">
-        Add User
-      </span>
-    </b-link>
+    <div class="d-flex justify-content-between">
+      <b-link href="/admin/user/create" class="btn btn-secondary mb-3">
+        <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon>
+        <span style="font-size: 18px;">
+          Add User
+        </span>
+      </b-link>
+
+      <b-form-group
+        label-for="filter-input"
+        class="mb-0"
+      >
+        <b-input-group>
+          <b-form-input
+            id="filter-input"
+            v-model="filter"
+            type="search"
+            placeholder="Type to Search"
+            style="min-height: 41px;"
+          ></b-form-input>
+        </b-input-group>
+      </b-form-group>
+    </div>
 
     <b-table
       class="text-truncate overflow-auto"
@@ -14,10 +31,19 @@
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
+      :filter="filter"
       responsive
     >
       <template #cell(index)="data">
         {{ data.index + 1 }}
+      </template>
+      <template #cell(profile)="{ item: { profile, first_name, last_name } }">
+        <b-avatar
+          :src="profile ? profile : ''"
+          size="2rem"
+          :text="!profile ? `${first_name[0]}${last_name[0]}` : ''"
+        >
+        </b-avatar>
       </template>
       <template #cell(disabled)="{ item: { disabled } }">
         <b-badge
@@ -27,14 +53,47 @@
           {{ disabled ? 'inactive' : 'active' }}
         </b-badge>
       </template>
-      <template #cell(actions)="{ item: { id } }">
-        <b-button variant="link" class="text-info p-0" :href="`/admin/user/${id}`">
+      <template #cell(actions)="{ item: { id, disabled } }">
+        <b-button
+          v-if="loggedInUser.id != id"
+          variant="link"
+          :class="`text-${disabled ? 'success' : 'warning'} p-0 mr-2`"
+          @click="handleDisabled(id, !disabled)"
+          v-b-tooltip.hover
+          :title="disabled ? 'Enable' : 'Disable'"
+        >
+          <b-icon
+            :icon="disabled ? 'unlock' : 'lock'"
+            aria-hidden="true"
+          >
+          </b-icon>
+        </b-button>
+        <b-button
+          variant="link"
+          class="text-secondary p-0 mr-2"
+          :href="`/admin/user/${id}`"
+          v-b-tooltip.hover
+          title="View"
+        >
           <b-icon icon="eye" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button variant="link" class="text-info p-0" :href="`/admin/user/edit/${id}`">
+        <b-button
+          variant="link"
+          class="text-info p-0 mr-2"
+          :href="`/admin/user/edit/${id}`"
+          v-b-tooltip.hover
+          title="Edit"
+        >
           <b-icon icon="pencil-square" aria-hidden="true"></b-icon>
         </b-button>
-        <b-button v-if="loggedInUser.id != id" variant="link" class="text-danger p-0" @click="handleDelete(id)">
+        <b-button
+          v-if="loggedInUser.id != id"
+          variant="link"
+          class="text-danger p-0"
+          @click="handleDelete(id)"
+          v-b-tooltip.hover
+          title="Delete"
+        >
           <b-icon icon="x-square" aria-hidden="true"></b-icon>
         </b-button>
       </template>
@@ -70,6 +129,7 @@ export default {
       access_token,
       fields: [
         { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
+        { key: 'profile', label: 'Profile' },
         { key: 'first_name', label: 'Firstname', sortable: true, sortDirection: 'desc' },
         { key: 'last_name', label: 'Lastname', sortable: true },
         { key: 'email', label: 'Email', sortable: true },
@@ -81,9 +141,39 @@ export default {
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
+      filter: null,
     };
   },
   methods: {
+    async handleDisabled(id, disabled) {
+      const reqInstance = axios.create({
+        headers: {
+          'Authorization': `Bearer ${this.access_token}`
+        }
+      });
+
+      await reqInstance.put(`${process.env.API_URL}/users/${id}`, { disabled })
+        .then(val => {
+          const { data: { success: suc, data: { disabled: dis } } } = val;
+          if (suc) {
+            new Noty({
+              text: 'Success update',
+              type: suc ? 'success' : 'error',
+              timeout: 2000
+            }).show();
+
+            const index = _.findIndex(this.items, ['id', id]);
+            if (index > -1) {
+              this.items[index].disabled = dis;
+            }
+          }
+        })
+        .catch(err => new Noty({
+          text: "We've got some error during request",
+          type: 'error',
+          timeout: 2000
+        }).show());
+    },
     handleDelete(id) {
       const vm = this;
       const reqInstance = axios.create({

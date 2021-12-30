@@ -43,7 +43,7 @@
             </span>
           </p>
           <p class="mb-3 text-muted d-flex justify-content-between">
-            <strong class="mr-3">User</strong>
+            <strong class="mr-3">Owner</strong>
             <span>
               {{ user.first_name }}
               {{ user.last_name }}
@@ -74,6 +74,13 @@
           </GMap>
         </b-col>
       </b-row>
+      <b-img
+        v-if="property.image"
+        :src="`${url}/${property.image}`"
+        fluid
+        alt="Image 1"
+      >
+      </b-img>
     </div>
   </fragment>
 </template>
@@ -105,24 +112,16 @@ export default {
       .then(val => val.data)
       .catch(err => console.log(err));
 
-    const property = await reqInstance.get(`${process.env.API_URL}/properties/${entry.property_id}`)
-      .then(val => val.data)
-      .catch(err => console.log(err));
-
-    const address = await axios.get(`${process.env.API_URL}/kh_address/${property.address}`)
+    const address = await axios.get(`${process.env.API_URL}/kh_address/${entry.property.address}`)
         .then(({ data: { path_en } }) => path_en.split(' / ').reverse().join(', '));
 
-    const user = await reqInstance.get(`${process.env.API_URL}/users/${property.user_id}`)
-        .then(val => val.data)
-        .catch(err => console.log(err));
-
     return {
+      url: process.env.API_URL,
       access_token,
       entry,
-      user: {},
-      property,
+      property: entry.property,
       address,
-      user,
+      user: entry.property.user,
     };
   },
 }

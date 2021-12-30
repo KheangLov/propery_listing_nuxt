@@ -2,7 +2,7 @@
   <fragment>
     <b-card class="border-0 shadow-sm">
       <div class="content text-left">
-        <b-row>
+        <b-row class="mb-3">
           <b-col>
             <p class="mb-3 text-muted d-flex justify-content-between">
               <strong class="mr-3">Listing Code</strong>
@@ -78,6 +78,13 @@
             </GMap>
           </b-col>
         </b-row>
+        <b-img
+          v-if="property.image"
+          :src="`${url}/${property.image}`"
+          fluid
+          alt="Image 1"
+        >
+        </b-img>
       </div>
     </b-card>
   </fragment>
@@ -92,30 +99,20 @@ export default {
   components: {
     Fragment,
   },
-  async asyncData({ params, store }) {
-    const access_token = store.state.auth.user.access_token;
+  async asyncData({ params }) {
     const entry = await axios.get(`${process.env.API_URL}/listings/front/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
 
-    const property = await axios.get(`${process.env.API_URL}/properties/front/${entry.property_id}`)
-      .then(val => val.data)
-      .catch(err => console.log(err));
-
-    const address = await axios.get(`${process.env.API_URL}/kh_address/${property.address}`)
+    const address = await axios.get(`${process.env.API_URL}/kh_address/${entry.property.address}`)
         .then(({ data: { path_en } }) => path_en.split(' / ').reverse().join(', '));
 
-    const user = await axios.get(`${process.env.API_URL}/users/front/${property.user_id}`)
-        .then(val => val.data)
-        .catch(err => console.log(err));
-
     return {
-      access_token,
       entry,
-      user: {},
-      property,
+      property: entry.property,
       address,
-      user,
+      user: entry.property.user,
+      url: process.env.API_URL
     };
   },
 }

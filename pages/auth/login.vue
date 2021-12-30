@@ -53,7 +53,10 @@
             </span>
           </validation-provider>
         </b-form-group>
-        <b-button type="submit" block variant="outline-secondary mt-4">Login</b-button>
+        <b-button type="submit" block variant="outline-secondary mt-4">
+          <b-icon icon="arrow-right-circle" aria-hidden="true"></b-icon>
+          Login
+        </b-button>
         <div class="text-center mt-2">
           <b-link href="/auth/register" class="text-secondary">Not having an account?</b-link>
         </div>
