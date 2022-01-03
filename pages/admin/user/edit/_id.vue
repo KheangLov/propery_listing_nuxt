@@ -233,7 +233,7 @@
             </b-row>
 
             <div class="text-left mt-3">
-              <b-button type="submit" variant="primary">
+              <b-button type="submit" variant="primary" v-if="button_loaded">
                 <b-icon
                   icon="arrow-right-square"
                   aria-hidden="true"
@@ -294,7 +294,8 @@ export default {
       },
       password_form: {},
       confimation: '',
-      profile: form.profile
+      profile: form.profile,
+      button_loaded: true,
     };
   },
   methods: {
@@ -311,6 +312,7 @@ export default {
     },
     handleSubmit() {
       const vm = this;
+      this.$set(this, 'button_loaded', false);
       this.$refs.form.validate()
         .then(async success => {
           if (!success) {
@@ -319,6 +321,7 @@ export default {
               type: 'error',
               timeout: 2000
             }).show();
+            this.$set(this, 'button_loaded', true);
             return false;
           }
 
@@ -340,17 +343,21 @@ export default {
                 setTimeout(() => window.location.href = '/admin/user', 2000);
               }
             })
-            .catch(err => new Noty({
-              text: "We've got some error during request",
-              type: 'error',
-              timeout: 2000
-            }).show());
+            .catch(err => {
+              new Noty({
+                text: "We've got some error during request",
+                type: 'error',
+                timeout: 2000
+              }).show();
+              this.$set(this, 'button_loaded', true);
+            });
 
           this.$nextTick(() => this.$refs.form.reset());
         });
     },
     handleChangePassword() {
       const vm = this;
+      this.$set(this, 'button_loaded', false);
       this.$refs.password_form.validate()
         .then(async success => {
           if (!success) {
@@ -379,11 +386,14 @@ export default {
                 }).show();
               }
             })
-            .catch(err => new Noty({
-              text: "We've got some error during request",
-              type: 'error',
-              timeout: 2000
-            }).show());
+            .catch(err => {
+              new Noty({
+                text: "We've got some error during request",
+                type: 'error',
+                timeout: 2000
+              }).show();
+              this.$set(this, 'button_loaded', true);
+            });
 
           this.$nextTick(() => this.$refs.form.reset());
         });

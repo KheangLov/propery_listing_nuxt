@@ -26,11 +26,14 @@
                 img-top
                 img-height="225px"
                 img-style="object-fit: cover;"
-                class="mb-2 border-0 shadow-sm"
+                class="mb-2 border-0 shadow-sm card-listing-custom"
                 body-class="bg-body-overlay"
                 overlay
               >
-                <b-card-text class="text-truncate">
+                <b-card-text
+                  text-tag="div"
+                  class="text-truncate"
+                >
                   <h4>
                     <span class="d-block mb-2 font-weight-bold">
                       {{ is_sale && 'SALE' }}
@@ -89,50 +92,47 @@
               :key="k"
             >
               <GMapInfoWindow>
-                <b-link :href="`/listing/${id}`" class="text-info text-decoration-none">
-                  <b-card
-                    :img-src="image ? `${url}/${image}` : 'https://picsum.photos/600/300/?image=25'"
-                    img-alt="Image"
-                    img-top
-                    img-height="225px"
-                    img-style="object-fit: cover;"
-                    class="mb-2 border-0 shadow-sm"
-                    body-class="bg-body-overlay"
-                    overlay
-                  >
-                    <b-card-text class="text-truncate">
-                      <h4>
-                        <span class="d-block mb-2 font-weight-bold">
-                          {{ is_sale && 'SALE' }}
-                          {{ (is_sale && is_rent) && '&' }}
-                          {{ is_rent && 'RENT' }}
-                        </span>
-                        <span
-                          v-if="sale_price"
-                          v-b-tooltip.hover
-                          :title="`Sale: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price)}`"
-                        >
-                          {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price) }}
-                        </span>
-                        <span v-if="sale_price && rent_price"> - </span>
-                        <span
-                          v-if="rent_price"
-                          v-b-tooltip.hover
-                          :title="`Rent: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price)}`"
-                        >
-                          {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price) }}
-                        </span>
-                      </h4>
-                      <span class="text-muted">
-                        {{ id.toString().padStart(6, '0') }}
-                      </span>
-                      |
-                      <span>
-                        {{ new Intl.NumberFormat().format(land_area) }}m<sup>2</sup>
-                      </span>
-                    </b-card-text>
-                  </b-card>
-                </b-link>
+                <b-img
+                  style="height: 115px;"
+                  class="mb-3"
+                  :src="image ? `${url}/${image}` : 'https://picsum.photos/600/300/?image=25'"
+                  :alt="image ? image : 'https://picsum.photos/600/300/?image=25'"
+                  fluid
+                />
+                <a
+                  :href="`/listing/${id}`"
+                  class="text-info text-decoration-none"
+                >
+                  <h6>
+                    <span class="d-block mb-2 font-weight-bold">
+                      {{ is_sale && 'SALE' }}
+                      {{ (is_sale && is_rent) && '&' }}
+                      {{ is_rent && 'RENT' }}
+                    </span>
+                    <span
+                      v-if="sale_price"
+                      v-b-tooltip.hover
+                      :title="`Sale: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price)}`"
+                    >
+                      {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price) }}
+                    </span>
+                    <span v-if="sale_price && rent_price"> - </span>
+                    <span
+                      v-if="rent_price"
+                      v-b-tooltip.hover
+                      :title="`Rent: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price)}`"
+                    >
+                      {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price) }}
+                    </span>
+                  </h6>
+                  <span class="text-muted">
+                    {{ id.toString().padStart(6, '0') }}
+                  </span>
+                  |
+                  <span>
+                    {{ new Intl.NumberFormat().format(land_area) }}m<sup>2</sup>
+                  </span>
+                </a>
               </GMapInfoWindow>
             </GMapMarker>
           </GMap>
@@ -156,6 +156,31 @@
     }
   }
 
+  .card-listing-custom {
+    overflow: hidden;
+    -webkit-transition: .3s ease-in-out;
+    -moz-transition: .3s ease-in-out;
+    -o-transition: .3s ease-in-out;
+    transition: .3s ease-in-out;
+    will-change: transform, box-shadow;
+
+    &:hover, &:focus {
+      transform: translateY(-4px);
+
+      img {
+        -webkit-transition: .3s ease-in-out;
+        -moz-transition: .3s ease-in-out;
+        -o-transition: .3s ease-in-out;
+        transition: .3s ease-in-out;
+        transform: scale(1.2);
+        -ms-transform: scale(1.2); /* IE 9 */
+        -moz-transform: scale(1.2); /* Firefox */
+        -webkit-transform: scale(1.2); /* Safari and Chrome */
+        -o-transform: scale(1.2); /* Opera */
+      }
+    }
+  }
+
   .card, .card-body, .card img {
     border-radius: 0.4rem !important;
   }
@@ -165,7 +190,7 @@
   }
 
   .bg-body-overlay {
-    background-color: rgba(0, 0, 0, 0.5) !important;
+    background-color: rgba(0, 0, 0, 0.4) !important;
   }
 </style>
 
@@ -181,7 +206,7 @@ export default {
 
     return {
       listings,
-      url: process.env.API_URL
+      url: process.env.API_URL,
     };
   },
 }

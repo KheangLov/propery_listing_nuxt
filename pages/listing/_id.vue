@@ -68,8 +68,9 @@
               class="mb-3"
               ref="gMap"
               language="en"
+              :options="{ mapTypeId: 'hybrid' }"
               :center="{ lat: property.latitude, lng: property.longitude }"
-              :zoom="11"
+              :zoom="14"
               @click="addMarker($event)"
             >
               <GMapMarker

@@ -48,7 +48,7 @@
         <b-col v-for="(k, i) in Object.keys(listing_count)" :key="i" class="mb-4">
           <b-card :bg-variant="k == 'active' ? 'success' : 'danger'" text-variant="white" class="shadow-sm text-uppercase border-0">
             <b-card-text class="m-0 p-0 d-flex justify-content-between">
-              <h4><b-icon icon="person" class="mb-2 d-block"></b-icon></h4>
+              <h4><b-icon icon="list-check" class="mb-2 d-block"></b-icon></h4>
               <h4 class="mb-0 d-inline-block">
                 {{ listing_count[k] }}
               </h4>
@@ -71,6 +71,15 @@
           >
             <template #cell(index)="data">
               {{ data.index + 1 }}
+            </template>
+            <template #cell(image)="{ item: { property: { image } } }">
+              <b-img
+                :src="image ? `${url}/${image}` : 'https://picsum.photos/250/250/?image=58'"
+                width="50"
+                height="50"
+                style="object-fit: cover; border-radius: 0.5rem;"
+                :alt="image"
+              ></b-img>
             </template>
             <template #cell(id)="{ item: { id } }">
               {{ id.toString().padStart(6, '0') }}
@@ -203,6 +212,7 @@ export default {
       ],
       listing_fields: [
         { key: 'index', label: 'No.' },
+        { key: 'image', label: 'Image' },
         { key: 'id', label: 'Listing Code' },
         { key: 'property_id', label: 'Property Code' },
         { key: 'sale_price', label: 'Sale Price' },

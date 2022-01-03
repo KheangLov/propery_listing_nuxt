@@ -204,23 +204,27 @@ export default {
           }
 
           await axios.post(`${process.env.API_URL}/register`, this.form)
-            .then(val => {
-              const { data: { success: suc } } = val;
-              if (suc) {
+            .then(({ data: { success: suc, message } }) => {
+              if (!suc) {
                 new Noty({
-                  text: 'Success register',
-                  type: suc ? 'success' : 'error',
+                  text: message ? message : 'Registration failed!',
+                  type: 'error',
                   timeout: 2000
                 }).show();
-                setTimeout(() => window.location.href = '/auth/login', 2000);
+                return false;
               }
 
+              new Noty({
+                text: 'Success register',
+                type: 'success',
+                timeout: 2000
+              }).show();
+              setTimeout(() => window.location.href = '/auth/login', 2000);
               this.form = {};
               this.confimation = '';
+              this.$nextTick(() => this.$refs.form.reset());
             })
             .catch(err => console.log(err));
-
-          this.$nextTick(() => this.$refs.form.reset());
         });
     }
   },

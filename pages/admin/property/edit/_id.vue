@@ -153,118 +153,6 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-city"
-              label="City"
-              label-for="input-city"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="city"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :readonly="cities.length ? false : true"
-                  v-model="city"
-                  :options="cities"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a city --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('city')" class="text-danger">
-                  {{ reasons.includes('city') ? 'Invalid city' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-district"
-              label="District"
-              label-for="input-district"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="district"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :disabled="districts.length ? false : true"
-                  v-model="district"
-                  :options="districts"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a district --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('district')" class="text-danger">
-                  {{ reasons.includes('district') ? 'Invalid district' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-commune"
-              label="Commune"
-              label-for="input-commune"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="commune"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :disabled="communes.length ? false : true"
-                  v-model="commune"
-                  :options="communes"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a commune --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('commune')" class="text-danger">
-                  {{ reasons.includes('commune') ? 'Invalid commune' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-village"
-              label="Village"
-              label-for="input-village"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="village"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :disabled="villages.length ? false : true"
-                  v-model="village"
-                  :options="villages"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a village --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('village')" class="text-danger">
-                  {{ reasons.includes('village') ? 'Invalid village' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
           <b-col cols="12">
             <b-form-group
               id="input-group-full-address"
@@ -355,11 +243,116 @@
               language="en"
               :center="{ lat: form.latitude, lng: form.longitude }"
               :options="{ mapTypeId: 'hybrid' }"
-              :zoom="11"
+              :zoom="14"
               @click="addMarker($event)"
               @loaded="markerAdd({ lat: form.latitude, lng: form.longitude })"
             >
             </GMap>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-city"
+              label="City"
+              label-for="input-city"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="city"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :readonly="cities.length ? false : true"
+                  v-model="city"
+                  :options="cities"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a city --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length || reasons.includes('city')" class="text-danger">
+                  {{ reasons.includes('city') ? 'Invalid city' : errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-district"
+              label="District"
+              label-for="input-district"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="district"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :disabled="districts.length ? false : true"
+                  v-model="district"
+                  :options="districts"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a district --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length || reasons.includes('district')" class="text-danger">
+                  {{ reasons.includes('district') ? 'Invalid district' : errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-commune"
+              label="Commune"
+              label-for="input-commune"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="commune"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :disabled="communes.length ? false : true"
+                  v-model="commune"
+                  :options="communes"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a commune --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length || reasons.includes('commune')" class="text-danger">
+                  {{ reasons.includes('commune') ? 'Invalid commune' : errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-village"
+              label="Village"
+              label-for="input-village"
+            >
+              <b-form-select
+                :disabled="villages.length ? false : true"
+                v-model="village"
+                :options="villages"
+              >
+                <template #first>
+                  <b-form-select-option :value="null" disabled>-- Please select a village --</b-form-select-option>
+                </template>
+              </b-form-select>
+              <span v-if="reasons.includes('village')" class="text-danger">
+                {{ reasons.includes('village') && 'Invalid village' }}
+              </span>
+            </b-form-group>
           </b-col>
 
           <b-col cols="6">
@@ -372,7 +365,7 @@
                 v-slot="{ errors }"
                 name="land_width"
                 type="text"
-                rules="required|numeric"
+                rules="required|numeric|min_value:100"
               >
                 <b-form-input
                   id="input-width"
@@ -399,7 +392,7 @@
                 v-slot="{ errors }"
                 name="land_length"
                 type="text"
-                rules="required|numeric"
+                rules="required|numeric|min_value:100"
               >
                 <b-form-input
                   id="input-length"
@@ -426,7 +419,7 @@
                 v-slot="{ errors }"
                 name="land_area"
                 type="text"
-                rules="required|numeric"
+                rules="required|numeric|min_value:100"
               >
                 <b-form-input
                   id="input-area"
@@ -607,6 +600,7 @@ export default {
       image: form.image,
       url: process.env.API_URL,
       users,
+      latLng: {},
     };
   },
   watch: {
@@ -622,8 +616,42 @@ export default {
     village(val) {
       this.setAddressCode(val);
     },
+    address_code(val) {
+      if (val) {
+        if (val.length == 2) {
+          this.$set(this, 'district', null);
+          this.$set(this, 'commune', null);
+          this.$set(this, 'village', null);
+          this.$set(this, 'communes', []);
+          this.$set(this, 'villages', []);
+        } else if (val.length == 4) {
+          this.$set(this, 'commune', null);
+          this.$set(this, 'village', null);
+          this.$set(this, 'villages', []);
+        } else if (val.length == 6) {
+          this.$set(this, 'village', null);
+        }
+        if (val.length <= 6) {
+          this.getLatLngByAnyLevel(val);
+        }
+      }
+    },
+    latLng: {
+      handler(val) {
+        if (['latitude'] in val && ['longitude'] in val && val.latitude && val.longitude) {
+          this.getAddressByLatLng(val.latitude, val.longitude);
+          this.$set(this.form, 'latitude', val.latitude);
+          this.$set(this.form, 'longitude', val.longitude);
+        }
+      },
+      deep: true,
+    },
     form: {
       handler(val) {
+        if (['latitude'] in val && ['longitude'] in val) {
+          this.getAddressByLatLng(val.latitude, val.longitude);
+        }
+
         if (['land_length'] in val && ['land_width'] in val && val.land_length && val.land_width) {
           this.$set(this.form, 'land_area', (val.land_length * val.land_width));
         } else {
@@ -687,6 +715,7 @@ export default {
               type: 'error',
               timeout: 2000
             }).show();
+            this.$set(this, 'button_loaded', true);
             return false;
           }
 
@@ -720,31 +749,6 @@ export default {
               }).show();
               this.$set(this, 'button_loaded', true);
             });
-        });
-    },
-    getAddress(code = '') {
-      const vm = this;
-      let query_string = '';
-
-      if (code) {
-        query_string = `?code=${code}`;
-      }
-
-      axios.get(`${process.env.API_URL}/kh_address${query_string}`)
-        .then(res => {
-          let key = 'cities';
-
-          if (code.length === 2) {
-            key = 'districts';
-          } else if (code.length === 4) {
-            key = 'communes';
-          } else if (code.length === 6) {
-            key = 'villages';
-          } else if (code.length > 6) {
-            return false;
-          }
-
-          vm.$set(vm, key, res.data.map(({ code: c, name_en }) => ({ value: c, text: name_en })));
         });
     },
   },

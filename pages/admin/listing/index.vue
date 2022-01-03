@@ -101,7 +101,6 @@
 
 <script>
 import _ from 'lodash';
-import moment from 'moment';
 import axios from 'axios';
 import Noty from 'noty';
 import { mapGetters } from 'vuex';
@@ -145,9 +144,6 @@ export default {
     };
   },
   methods: {
-    formatData(val) {
-      return moment(val);
-    },
     updateStatus(id, status) {
       const reqInstance = axios.create({
         headers: {

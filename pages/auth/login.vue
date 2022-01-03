@@ -110,9 +110,9 @@ export default {
             })
             .catch(err => {
               let message = 'Error!';
-              if (err.response.data && err.response.data.errors) {
-                vm.$refs.form.setErrors(err.response.data.errors);
-                message = err.response.data.message;
+              if (err.response.data && err.response.data.detail) {
+                vm.$refs.form.setErrors(err.response.data.detail);
+                message = err.response.data.detail;
               }
 
               new Noty({

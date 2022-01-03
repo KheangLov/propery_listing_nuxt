@@ -75,6 +75,7 @@ export default {
     '@/plugins/vee-validate.js',
     '@/plugins/bootstrap-icon.js',
     '@/plugins/vue-fragment.js',
+    '@/plugins/global-mixin.js',
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

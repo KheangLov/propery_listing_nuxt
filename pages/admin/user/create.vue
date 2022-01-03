@@ -202,7 +202,7 @@
         </b-row>
 
         <div class="text-left mt-3">
-          <b-button type="submit" variant="primary">
+          <b-button type="submit" variant="primary" v-if="button_loaded">
             <b-icon
               icon="arrow-right-square"
               aria-hidden="true"
@@ -248,6 +248,7 @@ export default {
       },
       confimation: '',
       profile: '',
+      button_loaded: true,
     };
   },
   methods: {
@@ -263,6 +264,7 @@ export default {
       };
     },
     handleSubmit() {
+      this.$set(this, 'button_loaded', false);
       this.$refs.form.validate()
         .then(async success => {
           if (!success) {
@@ -275,27 +277,35 @@ export default {
           }
 
           await axios.post(`${process.env.API_URL}/register`, this.form)
-            .then(val => {
-              const { data: { success: suc } } = val;
-              if (suc) {
+            .then(({ data: { success: suc, message } }) => {
+              if (!suc) {
                 new Noty({
-                  text: 'Success create',
-                  type: suc ? 'success' : 'error',
+                  text: message ? message : 'Create failed!',
+                  type: 'error',
                   timeout: 2000
                 }).show();
-                setTimeout(() => window.location.href = '/admin/user', 2000);
+                this.$set(this, 'button_loaded', true);
+                return false;
               }
 
+              new Noty({
+                text: 'Success create',
+                type: 'success',
+                timeout: 2000
+              }).show();
+              setTimeout(() => window.location.href = '/auth/login', 2000);
               this.form = {};
               this.confimation = '';
+              this.$nextTick(() => this.$refs.form.reset());
             })
-            .catch(err => new Noty({
-              text: "We've got some error during request",
-              type: suc ? 'success' : 'error',
-              timeout: 2000
-            }).show());
-
-          this.$nextTick(() => this.$refs.form.reset());
+            .catch(err => {
+              new Noty({
+                text: "We've got some error during request",
+                type: suc ? 'success' : 'error',
+                timeout: 2000
+              }).show();
+              this.$set(this, 'button_loaded', true);
+            });
         });
     }
   },

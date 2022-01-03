@@ -11,10 +11,53 @@
           <b-link href="/" class="text-white text-decoration-none" style="font-size: 26px;">P-Listing</b-link>
         </b-navbar-brand>
         <b-navbar-nav class="ml-auto">
-          <!-- <span class="text-white" v-if="date && time">
-            {{ date }} - {{ time }}
-          </span> -->
+          <b-nav-item link-classes="p-3">
+            <span class="text-white" v-if="date && time">
+              {{ date }} - {{ time }}
+            </span>
+          </b-nav-item>
           <b-link
+            v-if="!loggedInUser"
+            class="text-white text-decoration-none"
+            href="/auth/login"
+          >
+            LOGIN
+          </b-link>
+          <b-nav-item-dropdown
+            v-else
+            right
+            class="p-0"
+            menu-class="border-0 shadow-sm p-0"
+          >
+            <template
+              #button-content
+            >
+              <b-avatar
+                :src="loggedInUser.profile ? loggedInUser.profile : ''"
+                :text="!loggedInUser.profile ? `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}` : ''"
+              ></b-avatar>
+            </template>
+            <b-dropdown-item disabled>
+              {{ loggedInUser.first_name }}
+              {{ loggedInUser.last_name }}
+            </b-dropdown-item>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-item
+              href="/admin/profile"
+            >
+              <b-icon icon="person" aria-hidden="true" class="mr-2"></b-icon>
+              Profile
+            </b-dropdown-item>
+            <b-dropdown-item
+              v-if="isAuthenticated"
+              href="javascript:void(0)"
+              @click="logout"
+            >
+              <b-icon icon="arrow-left-circle" aria-hidden="true" class="mr-2"></b-icon>
+              Logout
+            </b-dropdown-item>
+          </b-nav-item-dropdown>
+          <!-- <b-link
             v-if="!loggedInUser"
             class="text-white text-decoration-none"
             href="/auth/login"
@@ -27,7 +70,7 @@
             href="/admin"
           >
             ADMIN
-          </b-link>
+          </b-link> -->
         </b-navbar-nav>
       </b-container>
     </b-navbar>
@@ -145,9 +188,13 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['loggedInUser'])
+    ...mapGetters(['loggedInUser', 'isAuthenticated'])
   },
   methods: {
+    async logout() {
+      await this.$auth.logout();
+      location.reload();
+    },
     zeroPadding(num, digit) {
       let zero = '';
       for(let i = 0; i < digit; i++) {
@@ -161,8 +208,8 @@ export default {
       this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding(cd.getMonth()+1, 2) + '-' + this.zeroPadding(cd.getDate(), 2) + ' ' + this.weeks[cd.getDay()];
     }
   },
-  // created() {
-  //   setInterval(this.updateTime, 1000);
-  // }
+  created() {
+    setInterval(this.updateTime, 1000);
+  }
 }
 </script>
