@@ -1,6 +1,7 @@
 <template>
   <fragment>
     <b-card class="border-0 shadow-sm">
+      <h4 class="title mb-4 text-uppercase">Listing Details</h4>
       <div class="content text-left">
         <b-row class="mb-3">
           <b-col>

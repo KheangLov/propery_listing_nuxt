@@ -34,9 +34,9 @@
       :filter="filter"
       responsive
     >
-      <template #cell(index)="data">
+      <!-- <template #cell(index)="data">
         {{ data.index + 1 }}
-      </template>
+      </template> -->
       <template #cell(image)="{ item: { image } }">
         <b-img
           :src="image ? `${url}/${image}` : 'https://picsum.photos/250/250/?image=58'"
@@ -239,6 +239,17 @@
         </b-button>
       </template>
     </b-table>
+    <div class="overflow-auto">
+      <b-pagination-nav
+        class="d-inline-block mr-2"
+        :link-gen="linkGen"
+        :number-of-pages="pages"
+        v-model="page"
+        use-router
+      >
+      </b-pagination-nav>
+      <span class="text-muted d-inline-block">Total {{ total }} entries.</span>
+    </div>
   </fragment>
 </template>
 
@@ -269,11 +280,15 @@ export default {
       }
     });
 
-    const items = await reqInstance.get(`${process.env.API_URL}/properties`).then(val => val.data);
+    const { query } = context.route;
+    const pg = query.page ? query.page : 1;
+    const sz = 10;
+    const { items, total, page, size } = await reqInstance.get(`${process.env.API_URL}/properties?page=${pg}&size=${sz}`).then(({ data }) => data);
+    const pages = Math.ceil(total / size);
     return {
       access_token,
       fields: [
-        { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
+        // { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
         { key: 'image', label: 'Image' },
         { key: 'id', label: 'Property Code', sortable: true, sortDirection: 'desc' },
         { key: 'sale_list_price', label: 'Sale Price', sortable: true, sortDirection: 'desc' },
@@ -287,6 +302,10 @@ export default {
         { key: 'actions', label: 'Actions' }
       ],
       items,
+      pages,
+      total,
+      page,
+      size,
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
@@ -315,7 +334,25 @@ export default {
       ]
     };
   },
+  watch: {
+    async page(val) {
+      const reqInstance = axios.create({
+        headers: {
+          'Authorization': `Bearer ${this.access_token}`
+        }
+      });
+
+      const { items } = await reqInstance.get(`${this.url}/properties?page=${val}&size=${this.size}`).then(({ data }) => data);
+      this.$set(this, 'items', items);
+    }
+  },
   methods: {
+    linkGen(pageNum) {
+      return {
+        path: '/admin/property',
+        query: { page: pageNum }
+      }
+    },
     modalAction(modal, form) {
       modal.show(`modal-convert-listing-${form.id}`);
       this.$set(this, 'form', form);
@@ -377,28 +414,40 @@ export default {
     },
     handleDelete(id) {
       const vm = this;
-      const reqInstance = axios.create({
-        headers: {
-          'Authorization': `Bearer ${this.access_token}`
-        }
+      const dialog = new Noty({
+        text: 'Do you really want to delete this property?',
+        type: 'error',
+        buttons: [
+          Noty.button('YES', 'btn btn-secondary', () => {
+            const reqInstance = axios.create({
+              headers: {
+                'Authorization': `Bearer ${this.access_token}`
+              }
+            });
+
+            reqInstance.delete(`${process.env.API_URL}/properties/${id}`)
+              .then(({ data: { message } }) => {
+                if (message)
+                  new Noty({
+                    text: message,
+                    type: message ? 'success' : 'error',
+                    timeout: 2000
+                  }).show();
+
+                vm.items = _.filter(vm.items, o => o.id != id);
+              })
+              .catch(err => new Noty({
+                text: "We've got some error during request",
+                type: 'error',
+                timeout: 2000
+              }).show());
+
+            dialog.close();
+          }, {id: 'button1', 'data-status': 'ok'}),
+          Noty.button('NO', 'btn btn-link text-white text-decoration-none', () => dialog.close())
+        ]
       });
-
-      reqInstance.delete(`${process.env.API_URL}/properties/${id}`)
-        .then(({ data: { message } }) => {
-          if (message)
-            new Noty({
-              text: message,
-              type: message ? 'success' : 'error',
-              timeout: 2000
-            }).show();
-
-          vm.items = _.filter(vm.items, o => o.id != id);
-        })
-        .catch(err => new Noty({
-          text: "We've got some error during request",
-          type: 'error',
-          timeout: 2000
-        }).show());
+      dialog.show();
     },
   },
 }

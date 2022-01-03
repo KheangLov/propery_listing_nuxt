@@ -5,6 +5,7 @@
       type="light"
       variant="light"
       sticky
+      toggleable="md"
       class="shadow-sm border-0 m-0"
       :class="isUserScrolling ? 'top-z-index' : ''"
     >
@@ -12,54 +13,57 @@
         <b-navbar-brand class="font-weight-bold px-2 text-white text-uppercase">
           <b-link href="/" class="text-secondary text-decoration-none">P-Listing</b-link>
         </b-navbar-brand>
-        <b-navbar-nav>
-          <b-nav-item
-            v-for="({ link, classes, text, icon }, i) in navItems"
-            @click="handleActive"
-            :href="link"
-            link-classes="rounded-0 text-secondary"
-            :class="classes"
-            :key="i"
-          >
-            <b-icon :icon="icon" class="mr-2"></b-icon>
-            {{ text }}
-          </b-nav-item>
-        </b-navbar-nav>
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item-dropdown
-            right
-            class="p-0"
-            menu-class="border-0 shadow-sm p-0"
-          >
-            <template
-              #button-content
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav>
+            <b-nav-item
+              v-for="({ link, classes, text, icon }, i) in navItems"
+              @click="handleActive"
+              :href="link"
+              link-classes="rounded-0 text-secondary"
+              :class="classes"
+              :key="i"
             >
-              <b-avatar
-                :src="loggedInUser.profile ? loggedInUser.profile : ''"
-                :text="!loggedInUser.profile ? `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}` : ''"
-              ></b-avatar>
-            </template>
-            <b-dropdown-item disabled>
-              {{ loggedInUser.first_name }}
-              {{ loggedInUser.last_name }}
-            </b-dropdown-item>
-            <b-dropdown-divider></b-dropdown-divider>
-            <b-dropdown-item
-              href="/admin/profile"
+              <b-icon :icon="icon" class="mr-2"></b-icon>
+              {{ text }}
+            </b-nav-item>
+          </b-navbar-nav>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item-dropdown
+              right
+              class="p-0"
+              menu-class="border-0 shadow-sm p-0"
             >
-              <b-icon icon="person" aria-hidden="true" class="mr-2"></b-icon>
-              Profile
-            </b-dropdown-item>
-            <b-dropdown-item
-              v-if="isAuthenticated"
-              href="javascript:void(0)"
-              @click="logout"
-            >
-              <b-icon icon="arrow-left-circle" aria-hidden="true" class="mr-2"></b-icon>
-              Logout
-            </b-dropdown-item>
-          </b-nav-item-dropdown>
-        </b-navbar-nav>
+              <template
+                #button-content
+              >
+                <b-avatar
+                  :src="loggedInUser.profile ? loggedInUser.profile : ''"
+                  :text="!loggedInUser.profile ? `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}` : ''"
+                ></b-avatar>
+              </template>
+              <b-dropdown-item disabled>
+                {{ loggedInUser.first_name }}
+                {{ loggedInUser.last_name }}
+              </b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-item
+                href="/admin/profile"
+              >
+                <b-icon icon="person" aria-hidden="true" class="mr-2"></b-icon>
+                Profile
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="isAuthenticated"
+                href="javascript:void(0)"
+                @click="logout"
+              >
+                <b-icon icon="arrow-left-circle" aria-hidden="true" class="mr-2"></b-icon>
+                Logout
+              </b-dropdown-item>
+            </b-nav-item-dropdown>
+          </b-navbar-nav>
+         </b-collapse>
       </b-container>
     </b-navbar>
     <b-container class="content-wrapper py-4">
@@ -161,7 +165,7 @@
       padding: 0;
       font-size: 18px;
       color: #545b62 !important;
-      opacity: 0.75 !important;
+      opacity: 0.7 !important;
     }
 
     .navbar-light .navbar-nav .nav-item {
