@@ -16,13 +16,13 @@
               {{ date }} - {{ time }}
             </span>
           </b-nav-item>
-          <b-link
+          <b-nav-item
             v-if="!loggedInUser"
-            class="text-white text-decoration-none"
+            link-classes="p-3 text-white text-decoration-none"
             href="/auth/login"
           >
             LOGIN
-          </b-link>
+          </b-nav-item>
           <b-nav-item-dropdown
             v-else
             right
@@ -57,20 +57,6 @@
               Logout
             </b-dropdown-item>
           </b-nav-item-dropdown>
-          <!-- <b-link
-            v-if="!loggedInUser"
-            class="text-white text-decoration-none"
-            href="/auth/login"
-          >
-            LOGIN
-          </b-link>
-          <b-link
-            v-else
-            class="text-white text-decoration-none"
-            href="/admin"
-          >
-            ADMIN
-          </b-link> -->
         </b-navbar-nav>
       </b-container>
     </b-navbar>
@@ -197,7 +183,7 @@ export default {
     },
     zeroPadding(num, digit) {
       let zero = '';
-      for(let i = 0; i < digit; i++) {
+      for (let i = 0; i < digit; i++) {
         zero += '0';
       }
       return (zero + num).slice(-digit);
@@ -205,7 +191,7 @@ export default {
     updateTime() {
       const cd = new Date();
       this.time = this.zeroPadding(cd.getHours(), 2) + ':' + this.zeroPadding(cd.getMinutes(), 2) + ':' + this.zeroPadding(cd.getSeconds(), 2);
-      this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding(cd.getMonth()+1, 2) + '-' + this.zeroPadding(cd.getDate(), 2) + ' ' + this.weeks[cd.getDay()];
+      this.date = this.zeroPadding(cd.getFullYear(), 4) + '-' + this.zeroPadding((cd.getMonth() + 1), 2) + '-' + this.zeroPadding(cd.getDate(), 2) + ' ' + this.weeks[cd.getDay()];
     }
   },
   created() {
