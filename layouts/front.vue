@@ -71,7 +71,7 @@
 
 <style lang="scss">
   .bg-body-front {
-    background-color: #fff7f7 !important;
+    background-color: #f5f1f1 !important;
   }
 
   #__nuxt {

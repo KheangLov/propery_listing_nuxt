@@ -705,7 +705,6 @@ export default {
       this.$set(this, 'address_code', code);
       this.$set(this.form, 'address', this.address_code);
       this.getAddress(this.address_code);
-      console.log(this.form);
     },
     markerAdd(latLng) {
       this.$set(this, 'location', latLng);
@@ -736,7 +735,6 @@ export default {
       this.readFileBase64(reader, e.target.files[0], 'image', 'image');
     },
     handleSubmit() {
-      console.log(this.form);
       const vm = this;
       this.$set(this, 'button_loaded', false);
       this.$refs.form.validate()

@@ -687,6 +687,7 @@ export default {
             }
           });
 
+          this.form.reason = '';
           await reqInstance.post(`${process.env.API_URL}/properties`, this.form)
             .then(({ data: { success: suc, message, detail } }) => {
               if (!suc || detail) {
