@@ -340,13 +340,12 @@ export default {
             }
           });
 
-          await reqInstance.put(`${process.env.API_URL}/change_password/${vm.$route.params.id}`, this.form)
-            .then(val => {
-              const { data: { success: suc } } = val;
-              if (suc) {
+          await reqInstance.put(`${process.env.API_URL}/change_password/${vm.$route.params.id}`, this.password_form)
+            .then(({ status }) => {
+              if (status === 200) {
                 new Noty({
                   text: 'Success change password',
-                  type: suc ? 'success' : 'error',
+                  type: 'success',
                   timeout: 2000
                 }).show();
               }

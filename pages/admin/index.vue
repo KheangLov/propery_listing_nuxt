@@ -69,8 +69,10 @@
             :fields="listing_fields"
             responsive
           >
-            <template #cell(index)="data">
-              {{ data.index + 1 }}
+            <template #cell(index)="{ item: { id }, index }">
+              <a :href="`/admin/listing/${id}`" class="text-dark text-decoration-none">
+                {{ index + 1 }}
+              </a>
             </template>
             <template #cell(image)="{ item: { property: { image } } }">
               <b-img
@@ -82,16 +84,18 @@
               ></b-img>
             </template>
             <template #cell(id)="{ item: { id } }">
-              {{ id.toString().padStart(6, '0') }}
+              <a :href="`/admin/listing/${id}`">
+                {{ paddString(id) }}
+              </a>
             </template>
             <template #cell(property_id)="{ item: { property: { id } } }">
-              {{ id.toString().padStart(6, '0') }}
+              {{ paddString(id) }}
             </template>
-            <template #cell(sale_price)="{ item: { sale_price } }">
-              {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price) }}
+            <template #cell(sale_price)="{ item: { property: { is_sale }, sale_price } }">
+              {{ formatNumber(is_sale ? sale_price : 0, { style: 'currency', currency: 'USD' }) }}
             </template>
-            <template #cell(rent_price)="{ item: { rent_price } }">
-              {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price) }}
+            <template #cell(rent_price)="{ item: { property: { is_rent }, rent_price } }">
+              {{ formatNumber(is_rent ? rent_price : 0, { style: 'currency', currency: 'USD' }) }}
             </template>
             <template #cell(status)="{ item: { status } }">
               <b-badge
@@ -111,8 +115,10 @@
             :fields="property_fields"
             responsive
           >
-            <template #cell(index)="data">
-              {{ data.index + 1 }}
+            <template #cell(index)="{ item: { id }, index }">
+              <a :href="`/admin/property/${id}`" class="text-dark text-decoration-none">
+                {{ index + 1 }}
+              </a>
             </template>
             <template #cell(image)="{ item: { image } }">
               <b-img
@@ -124,13 +130,15 @@
               ></b-img>
             </template>
             <template #cell(id)="{ item: { id } }">
-              {{ id.toString().padStart(6, '0') }}
+              <a :href="`/admin/property/${id}`">
+                {{ paddString(id) }}
+              </a>
             </template>
-            <template #cell(sale_list_price)="{ item: { sale_list_price } }">
-              {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_list_price) }}
+            <template #cell(sale_list_price)="{ item: { sale_list_price, is_sale } }">
+              {{ formatNumber(is_sale ? sale_list_price : 0, { style: 'currency', currency: 'USD' }) }}
             </template>
-            <template #cell(rent_list_price)="{ item: { rent_list_price } }">
-              {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_list_price) }}
+            <template #cell(rent_list_price)="{ item: { rent_list_price, is_rent } }">
+              {{ formatNumber(is_rent ? rent_list_price : 0, { style: 'currency', currency: 'USD' }) }}
             </template>
             <template #cell(is_sale)="{ item: { is_sale } }">
               <b-icon

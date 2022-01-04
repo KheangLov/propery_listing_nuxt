@@ -26,11 +26,22 @@
       :filter="filter"
       responsive
     >
+      <template #cell(image)="{ item: { property: { image } } }">
+        <b-img
+          :src="image ? `${url}/${image}` : 'https://picsum.photos/250/250/?image=58'"
+          width="50"
+          height="50"
+          style="object-fit: cover; border-radius: 0.5rem;"
+          :alt="image"
+        ></b-img>
+      </template>
       <template #cell(id)="{ item: { id } }">
         {{ paddString(id) }}
       </template>
       <template #cell(property_id)="{ item: { property: { id } } }">
-        {{ paddString(id) }}
+        <a :href="`/admin/property/${id}`">
+          {{ paddString(id) }}
+        </a>
       </template>
       <template #cell(sale_price)="{ item: { property: { is_sale }, sale_price } }">
         {{ formatNumber(is_sale ? sale_price : 0, { style: 'currency', currency: 'USD' }) }}
@@ -141,6 +152,7 @@ export default {
     return {
       access_token,
       fields: [
+        { key: 'image', label: 'Image' },
         { key: 'id', label: 'Listing Code', sortable: true, sortDirection: 'desc' },
         { key: 'property_id', label: 'Property Code', sortable: true, sortDirection: 'desc' },
         { key: 'sale_price', label: 'Sale Price', sortable: true },
