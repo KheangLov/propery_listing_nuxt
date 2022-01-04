@@ -8,24 +8,27 @@
         </span>
       </b-link>
 
-      <b-form-group
-        label-for="filter-input"
-        class="mb-0"
-      >
-        <b-input-group>
+      <div>
+        <b-input-group
+          class="mb-3 search-input"
+          style="height: 41px;"
+        >
+          <b-input-group-prepend is-text>
+            <b-icon icon="search"></b-icon>
+          </b-input-group-prepend>
           <b-form-input
             id="filter-input"
-            v-model="filter"
             type="search"
-            placeholder="Type to Search"
-            style="min-height: 41px;"
+            @change="handleSearch($event)"
+            placeholder="Search by (first_name, last_name, email)"
+            style="height: 41px;"
           ></b-form-input>
         </b-input-group>
-      </b-form-group>
+      </div>
     </div>
 
     <b-table
-      class="text-truncate overflow-auto"
+      class="text-truncate overflow-auto border-bottom"
       :items="items"
       :fields="fields"
       :sort-by.sync="sortBy"
@@ -34,12 +37,12 @@
       :filter="filter"
       responsive
     >
-      <template #cell(index)="data">
+      <!-- <template #cell(index)="data">
         {{ data.index + 1 }}
-      </template>
+      </template> -->
       <template #cell(profile)="{ item: { profile, first_name, last_name } }">
         <b-avatar
-          :src="profile ? profile : ''"
+          :src="profile ? `${url}/${profile}` : ''"
           size="2rem"
           :text="!profile ? `${first_name[0]}${last_name[0]}` : ''"
         >
@@ -52,6 +55,12 @@
         >
           {{ disabled ? 'inactive' : 'active' }}
         </b-badge>
+      </template>
+      <template #cell(created_at)="{ item: { created_at } }">
+        {{ formatDatetime(created_at) }}
+      </template>
+      <template #cell(updated_at)="{ item: { updated_at } }">
+        {{ formatDatetime(updated_at) }}
       </template>
       <template #cell(actions)="{ item: { id, disabled } }">
         <b-button
@@ -98,6 +107,17 @@
         </b-button>
       </template>
     </b-table>
+    <div class="overflow-auto">
+      <b-pagination-nav
+        class="d-inline-block mr-2"
+        :link-gen="linkGen"
+        :number-of-pages="pages"
+        v-model="page"
+        use-router
+      >
+      </b-pagination-nav>
+      <span class="text-muted d-inline-block">Total {{ total }} entries.</span>
+    </div>
   </fragment>
 </template>
 
@@ -124,27 +144,56 @@ export default {
       }
     });
 
-    const items = await reqInstance.get(`${process.env.API_URL}/users`).then(val => val.data);
+    const { query } = context.route;
+    const pg = query.page ? query.page : 1;
+    const sz = 10;
+    const { items, total, page, size } = await reqInstance.get(`${process.env.API_URL}/users?page=${pg}&size=${sz}`).then(({ data }) => data);
+    const pages = Math.ceil(total / size);
     return {
       access_token,
       fields: [
-        { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
+        // { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
         { key: 'profile', label: 'Profile' },
         { key: 'first_name', label: 'Firstname', sortable: true, sortDirection: 'desc' },
         { key: 'last_name', label: 'Lastname', sortable: true },
         { key: 'email', label: 'Email', sortable: true },
         { key: 'phone', label: 'Phone', sortable: true },
         { key: 'disabled', label: 'Status', sortable: true },
+        { key: 'created_at', label: 'Created At', sortable: true },
+        { key: 'updated_at', label: 'Updated At', sortable: true },
         { key: 'actions', label: 'Actions' }
       ],
       items,
+      pages,
+      total,
+      page,
+      size,
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
+      url: process.env.API_URL
     };
   },
+  watch: {
+    async page(val) {
+      const reqInstance = axios.create({
+        headers: {
+          'Authorization': `Bearer ${this.access_token}`
+        }
+      });
+
+      const { items } = await reqInstance.get(`${this.url}/users?page=${val}&size=${this.size}`).then(({ data }) => data);
+      this.$set(this, 'items', items);
+    }
+  },
   methods: {
+    linkGen(pageNum) {
+      return {
+        path: '/admin/user',
+        query: { page: pageNum }
+      }
+    },
     async handleDisabled(id, disabled) {
       const reqInstance = axios.create({
         headers: {
@@ -198,6 +247,23 @@ export default {
           type: 'error',
           timeout: 2000
         }).show());
+    },
+    async handleSearch(e) {
+      const reqInstance = axios.create({
+        headers: {
+          'Authorization': `Bearer ${this.access_token}`
+        }
+      });
+      let url = `${process.env.API_URL}/users?page=1&size=10`;
+      if (e) {
+        url += `&search=${e}`;
+      }
+      const { items, total, page, size } = await reqInstance.get(url).then(({ data }) => data);
+      const pages = Math.ceil(total / size);
+      this.$set(this, 'items', items);
+      this.$set(this, 'total', total);
+      this.$set(this, 'page', page);
+      this.$set(this, 'pages', pages);
     }
   },
 }

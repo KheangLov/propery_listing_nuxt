@@ -16,3 +16,25 @@ extend('password', {
   },
   message: 'Password confirmation does not match'
 });
+
+extend("decimal", {
+  validate: (value, { decimals = '*', separator = '.' } = {}) => {
+    if (value === null || value === undefined || value === '') {
+      return {
+        valid: false
+      };
+    }
+    if (Number(decimals) === 0) {
+      return {
+        valid: /^-?\d*$/.test(value),
+      };
+    }
+    const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
+    const regex = new RegExp(`^[-+]?\\d*(\\${separator}\\d${regexPart})?([eE]{1}[-]?\\d+)?$`);
+
+    return {
+      valid: regex.test(value),
+    };
+  },
+  message: 'The {_field_} field must contain only decimal values'
+});

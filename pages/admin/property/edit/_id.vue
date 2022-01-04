@@ -15,17 +15,25 @@
     <ValidationObserver ref="form">
       <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
         <b-row>
-
           <b-col cols="6">
             <b-form-group
               id="input-group-is-sale"
               label-for="input-is-sale"
             >
-              <b-form-checkbox
-                v-model="form.is_sale"
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="is_sale"
+                type="text"
               >
-                Is Sale
-              </b-form-checkbox>
+                <b-form-checkbox
+                  v-model="form.is_sale"
+                >
+                  Is Sale
+                </b-form-checkbox>
+                <span v-if="errors.length" class="text-danger">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
             </b-form-group>
           </b-col>
 
@@ -34,11 +42,20 @@
               id="input-group-is-rent"
               label-for="input-is-rent"
             >
-              <b-form-checkbox
-                v-model="form.is_rent"
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="is_rent"
+                type="text"
               >
-                Is Rent
-              </b-form-checkbox>
+                <b-form-checkbox
+                  v-model="form.is_rent"
+                >
+                  Is Rent
+                </b-form-checkbox>
+                <span v-if="errors.length" class="text-danger">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
             </b-form-group>
           </b-col>
 
@@ -53,7 +70,7 @@
                 v-slot="{ errors }"
                 name="sale_list_price"
                 type="text"
-                rules="required"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-sale-price"
@@ -81,7 +98,7 @@
                 v-slot="{ errors }"
                 name="rent_list_price"
                 type="text"
-                rules="required"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-rent-price"
@@ -266,6 +283,7 @@
                   :readonly="cities.length ? false : true"
                   v-model="city"
                   :options="cities"
+                  @change="handleAddressChange('city')"
                 >
                   <template #first>
                     <b-form-select-option :value="null" disabled>-- Please select a city --</b-form-select-option>
@@ -294,6 +312,7 @@
                   :disabled="districts.length ? false : true"
                   v-model="district"
                   :options="districts"
+                  @change="handleAddressChange('district')"
                 >
                   <template #first>
                     <b-form-select-option :value="null" disabled>-- Please select a district --</b-form-select-option>
@@ -322,6 +341,7 @@
                   :disabled="communes.length ? false : true"
                   v-model="commune"
                   :options="communes"
+                  @change="handleAddressChange('commune')"
                 >
                   <template #first>
                     <b-form-select-option :value="null" disabled>-- Please select a commune --</b-form-select-option>
@@ -344,6 +364,7 @@
                 :disabled="villages.length ? false : true"
                 v-model="village"
                 :options="villages"
+                @change="handleAddressChange('village')"
               >
                 <template #first>
                   <b-form-select-option :value="null" disabled>-- Please select a village --</b-form-select-option>
@@ -365,7 +386,7 @@
                 v-slot="{ errors }"
                 name="land_width"
                 type="text"
-                rules="required|numeric|min_value:100"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-width"
@@ -392,7 +413,7 @@
                 v-slot="{ errors }"
                 name="land_length"
                 type="text"
-                rules="required|numeric|min_value:100"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-length"
@@ -419,7 +440,7 @@
                 v-slot="{ errors }"
                 name="land_area"
                 type="text"
-                rules="required|numeric|min_value:100"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-area"
@@ -465,56 +486,55 @@
 
 
           <b-col cols="6">
-            <b-form-group
-              id="input-group-image"
-              label="Image"
-              label-for="input-image"
-            >
-              <b-form-file class="mb-3" id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
-                <template slot="file-name" slot-scope="{ names }">
-                  <b-badge variant="dark">{{ names[0] }}</b-badge>
-                  <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
-                    + {{ names.length - 1 }} More files
-                  </b-badge>
-                </template>
-              </b-form-file>
-              <b-img
-                v-if="image"
-                :src="image.includes('base64,') ? image : `${url}/${image}`"
-                fluid
-                alt="Image 1"
-              >
-              </b-img>
-              <span v-if="reasons.includes('image')" class="text-danger">
-                {{ reasons.includes('image') && 'Invalid image' }}
-              </span>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="12">
             <ValidationProvider
               v-slot="{ errors }"
-              name="description"
+              name="image"
               type="text"
-              rules="required"
             >
               <b-form-group
-                id="input-group-desc"
-                label="Description"
-                label-for="input-desc"
+                id="input-group-image"
+                label="Image"
+                label-for="input-image"
               >
-                <b-form-textarea
-                  id="input-desc"
-                  v-model="form.description"
-                  placeholder="Enter description"
-                  rows="3"
-                  max-rows="6"
-                ></b-form-textarea>
-                <span v-if="errors.length || reasons.includes('description')" class="text-danger">
-                  {{ reasons.includes('description') ? 'Invalid description' : errors[0] }}
+                <b-form-file class="mb-3" id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
+                  <template slot="file-name" slot-scope="{ names }">
+                    <b-badge variant="dark">{{ names[0] }}</b-badge>
+                    <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
+                      + {{ names.length - 1 }} More files
+                    </b-badge>
+                  </template>
+                </b-form-file>
+                <b-img
+                  v-if="image"
+                  :src="image.includes('base64,') ? image : `${url}/${image}`"
+                  fluid
+                  alt="Image 1"
+                >
+                </b-img>
+                <span v-if="errors.length || reasons.includes('image')" class="text-danger d-block">
+                  {{ reasons.includes('image') ? 'Invalid image' : errors[0] }}
                 </span>
               </b-form-group>
             </ValidationProvider>
+          </b-col>
+
+          <b-col cols="12">
+            <b-form-group
+              id="input-group-desc"
+              label="Description"
+              label-for="input-desc"
+            >
+              <b-form-textarea
+                id="input-desc"
+                v-model="form.description"
+                placeholder="Enter description"
+                rows="3"
+                max-rows="6"
+              ></b-form-textarea>
+              <span v-if="reasons.includes('description')" class="text-danger">
+                {{ reasons.includes('description') && 'Invalid description' }}
+              </span>
+            </b-form-group>
           </b-col>
         </b-row>
 
@@ -543,7 +563,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { Fragment } from 'vue-fragment';
 import axios from 'axios';
 import Noty from 'noty';
 import { ValidationObserver, ValidationProvider } from "vee-validate";
@@ -551,7 +570,6 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 export default {
   middleware: 'auth',
   components: {
-    Fragment,
     ValidationObserver,
     ValidationProvider
   },
@@ -559,7 +577,7 @@ export default {
     ...mapGetters(['loggedInUser'])
   },
   async asyncData({ params, store }) {
-    const access_token = store.state.auth.user.access_token;
+    const { access_token } = store.state.auth.user;
     const reqInstance = axios.create({
       headers: {
         'Authorization': `Bearer ${access_token}`
@@ -569,7 +587,7 @@ export default {
       .then(val => val.data)
       .catch(err => console.log(err));
 
-    const users = await reqInstance.get(`${process.env.API_URL}/users`).then(val => val.data);
+    const users = await reqInstance.get(`${process.env.API_URL}/all_users`).then(val => val.data);
     const reasons = form.reason ? JSON.parse(form.reason) : [];
     form.reason = '';
     return {
@@ -601,6 +619,7 @@ export default {
       url: process.env.API_URL,
       users,
       latLng: {},
+      mounted: false
     };
   },
   watch: {
@@ -648,8 +667,11 @@ export default {
     },
     form: {
       handler(val) {
-        if (['latitude'] in val && ['longitude'] in val) {
-          this.getAddressByLatLng(val.latitude, val.longitude);
+        if (!val.is_sale) {
+          this.$set(this.form, 'sale_list_price', 0);
+        }
+        if (!val.is_rent) {
+          this.$set(this.form, 'rent_list_price', 0);
         }
 
         if (['land_length'] in val && ['land_width'] in val && val.land_length && val.land_width) {
@@ -664,10 +686,26 @@ export default {
     },
   },
   methods: {
+    handleAddressChange(type) {
+      let keys = '';
+
+      if (type === 'district') {
+        keys = ['district', 'commune', 'village'];
+      } else if (type === 'commune') {
+        keys = ['commune', 'village'];
+      } else if (type === 'village') {
+        keys = ['village'];
+      } else {
+        keys = ['city', 'district', 'commune', 'village'];
+      }
+
+      this.$set(this, 'reasons', this.reasons.filter(f => !keys.includes(f)));
+    },
     setAddressCode(code) {
       this.$set(this, 'address_code', code);
       this.$set(this.form, 'address', this.address_code);
       this.getAddress(this.address_code);
+      console.log(this.form);
     },
     markerAdd(latLng) {
       this.$set(this, 'location', latLng);
@@ -679,7 +717,7 @@ export default {
           position: latLng,
           map: this.$refs.gMap.map,
       });
-      this.$set(this, 'form', { ...this.form, latitude: latLng.lat, longitude: latLng.lng })
+      this.$set(this, 'latLng', { latitude: latLng.lat, longitude: latLng.lng });
     },
     addMarker({ event: { latLng } }) {
       this.$set(this, 'location', { lat: latLng.lat(), lng: latLng.lng() });
@@ -691,27 +729,21 @@ export default {
           position: latLng,
           map: this.$refs.gMap.map,
       });
-      this.$set(this, 'form', { ...this.form, latitude: latLng.lat(), longitude: latLng.lng() })
+      this.$set(this, 'latLng', { latitude: latLng.lat(), longitude: latLng.lng() });
     },
     handleUpload(e) {
       const reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-      reader.onload = () => {
-        this.$set(this, 'image', reader.result);
-        this.$set(this.form, 'image', reader.result.split('base64,')[1]);
-      };
-      reader.onerror = error => {
-        console.log('Error: ', error);
-      };
+      this.readFileBase64(reader, e.target.files[0], 'image', 'image');
     },
     handleSubmit() {
+      console.log(this.form);
       const vm = this;
       this.$set(this, 'button_loaded', false);
       this.$refs.form.validate()
         .then(async success => {
           if (!success) {
             new Noty({
-              text: 'Invild data!',
+              text: 'Invalid form input!',
               type: 'error',
               timeout: 2000
             }).show();

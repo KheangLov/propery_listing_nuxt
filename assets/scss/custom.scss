@@ -23,6 +23,38 @@ $footer-text: #868e96;
 //all other custom scss files or css should be added here
 body {
   background-color: $body;
+
+  .input-group > .input-group-prepend > .btn,
+  .input-group > .input-group-prepend > .input-group-text,
+  .input-group > .input-group-append:not(:last-child) > .btn,
+  .input-group > .input-group-append:not(:last-child) > .input-group-text,
+  .input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle),
+  .input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {
+    background-color: transparent !important;
+  }
+
+  .GMap__Wrapper {
+    height: 450px !important;
+  }
+
+  .pagination {
+
+    .page-item {
+
+      &.active {
+
+        .page-link {
+          color: #fff;
+          background-color: #6c757d;
+          border-color: #6c757d;
+        }
+      }
+
+      .page-link {
+        color: #6c757d;
+      }
+    }
+  }
 }
 
 .outter-wrapper {

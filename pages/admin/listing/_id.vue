@@ -3,53 +3,61 @@
     <h4 class="title mb-4 text-uppercase">Listing Details</h4>
     <div class="content text-left">
       <b-row>
-        <b-col>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+        <b-col md="6">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate" v-if="entry.property.is_sale">
             <strong class="mr-3">Sale Price</strong>
-            {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(entry.sale_price) }}
+            {{ formatNumber(entry.sale_price, { style: 'currency', currency: 'USD' }) }}
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate" v-if="entry.property.is_rent">
             <strong class="mr-3">Rent Price</strong>
-            {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(entry.rent_price) }}
+            {{ formatNumber(entry.rent_price, { style: 'currency', currency: 'USD' }) }}
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate">
             <strong class="mr-3">Latitude</strong>
             {{ property.latitude }}
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate">
             <strong class="mr-3">Longitude</strong>
             {{ property.longitude }}
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p
+            class="mb-3 text-muted d-flex justify-content-between text-truncate"
+            v-b-tooltip.hover
+            :title="address"
+          >
             <strong class="mr-3">Address</strong>
             {{ address }}
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p
+            class="mb-3 text-muted d-flex justify-content-between text-truncate"
+            v-b-tooltip.hover
+            :title="property.full_address"
+          >
             <strong class="mr-3">Full Address</strong>
             {{ property.full_address }}
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate">
             <strong class="mr-3">Width</strong>
-            {{ new Intl.NumberFormat().format(property.land_width) }}m
+            {{ formatNumber(property.land_width) }}m
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate">
             <strong class="mr-3">Length</strong>
-            {{ new Intl.NumberFormat().format(property.land_length) }}m
+            {{ formatNumber(property.land_length) }}m
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate">
             <strong class="mr-3">Area</strong>
             <span>
-              {{ new Intl.NumberFormat().format(property.land_area) }}m<sup>2</sup>
+              {{ formatNumber(property.land_area) }}m<sup>2</sup>
             </span>
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate">
             <strong class="mr-3">Owner</strong>
             <span>
               {{ user.first_name }}
               {{ user.last_name }}
             </span>
           </p>
-          <p class="mb-3 text-muted d-flex justify-content-between">
+          <p class="mb-3 text-muted d-flex justify-content-between text-truncate">
             <strong class="mr-3">Status</strong>
             <b-badge
               :variant="entry.status === 'inactive' ? 'danger' : 'success'"
@@ -59,7 +67,7 @@
             </b-badge>
           </p>
         </b-col>
-        <b-col>
+        <b-col md="6">
           <GMap
             class="mb-3"
             ref="gMap"
@@ -78,8 +86,9 @@
       <b-img
         v-if="property.image"
         :src="`${url}/${property.image}`"
+        class="w-100"
         fluid
-        alt="Image 1"
+        :alt="property.image"
       >
       </b-img>
     </div>

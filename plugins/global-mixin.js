@@ -5,8 +5,75 @@ import Noty from 'noty';
 
 const mixin = {
   methods: {
-    formatData(val) {
-      return moment(val);
+    handleCreateUser() {
+      this.$set(this, 'button_loaded', false);
+      this.$refs.form.validate()
+        .then(async success => {
+          if (!success) {
+            new Noty({
+              text: 'Invalid form input!',
+              type: 'error',
+              timeout: 2000
+            }).show();
+            return false;
+          }
+
+          await axios.post(`${process.env.API_URL}/register`, this.form)
+            .then(({ data: { success: suc, message, field } }) => {
+              if (!suc) {
+                new Noty({
+                  text: message ? message : 'Create failed!',
+                  type: 'error',
+                  timeout: 2000
+                }).show();
+                this.$refs.form.setErrors(field);
+                this.$set(this, 'button_loaded', true);
+                return false;
+              }
+
+              new Noty({
+                text: 'Success create',
+                type: 'success',
+                timeout: 2000
+              }).show();
+              setTimeout(() => window.location.href = this.redirect_url, 2000);
+              this.form = {};
+              this.confimation = '';
+              this.$nextTick(() => this.$refs.form.reset());
+            })
+            .catch(err => {
+              console.log(err);
+              new Noty({
+                text: "We've got some error during request",
+                type: suc ? 'success' : 'error',
+                timeout: 2000
+              }).show();
+              this.$set(this, 'button_loaded', true);
+            });
+        });
+    },
+    readFileBase64(reader, file, field = '', form_field = '') {
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (field) {
+          this.$set(this, field, reader.result);
+        }
+        if (form_field) {
+          this.$set(this.form, form_field, reader.result);
+        }
+      };
+      reader.onerror = error => {
+        console.log('Error: ', error);
+      };
+    },
+    paddString(str, len = 6, prefix = '0') {
+      return str.toString().padStart(len, prefix);
+    },
+    formatNumber(val, option = {}) {
+      return new Intl.NumberFormat('en-US', option).format(val);
+    },
+    formatDatetime(val) {
+      return moment(val).format("dddd, MMMM Do YYYY, h:mm:ss A");
     },
     getAddressByLatLng(lat, lng) {
       axios.get(`${process.env.Z1_DATA_URL}v1/communes?lat=${lat}&lng=${lng}`)
@@ -28,15 +95,15 @@ const mixin = {
       axios.get(`${process.env.Z1_DATA_URL}v1/administrations/${code}?boundary=true`)
         .then(async response => {
             const {
+              data: {
                 data: {
-                  data: {
-                    center: {
-                        geometry: {
-                            coordinates
-                        }
-                    },
-                  }
+                  center: {
+                    geometry: {
+                      coordinates
+                    }
+                  },
                 }
+              }
             } = response;
 
             if (this.marker) {

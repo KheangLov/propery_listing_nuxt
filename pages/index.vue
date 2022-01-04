@@ -36,32 +36,32 @@
                 >
                   <h4>
                     <span class="d-block mb-2 font-weight-bold">
-                      {{ is_sale && 'SALE' }}
-                      {{ (is_sale && is_rent) && '&' }}
-                      {{ is_rent && 'RENT' }}
+                      {{ is_sale ? 'SALE' : '' }}
+                      {{ (is_sale && is_rent) ? '&' : '' }}
+                      {{ is_rent ? 'RENT' : '' }}
                     </span>
                     <span
-                      v-if="sale_price"
+                      v-if="is_sale"
                       v-b-tooltip.hover
-                      :title="`Sale: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price)}`"
+                      :title="`Sale: ${formatNumber(sale_price, { style: 'currency', currency: 'USD' })}`"
                     >
-                      {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price) }}
+                      {{ formatNumber(sale_price, { style: 'currency', currency: 'USD' }) }}
                     </span>
-                    <span v-if="sale_price && rent_price"> - </span>
+                    <span v-if="is_sale && is_rent"> - </span>
                     <span
                       v-if="rent_price"
                       v-b-tooltip.hover
-                      :title="`Rent: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price)}`"
+                      :title="`Rent: ${formatNumber(rent_price, { style: 'currency', currency: 'USD' })}`"
                     >
-                      {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price) }}
+                      {{ formatNumber(rent_price, { style: 'currency', currency: 'USD' }) }}
                     </span>
                   </h4>
                   <span class="text-white">
-                    {{ id.toString().padStart(6, '0') }}
+                    {{ paddString(id) }}
                   </span>
                   |
                   <span>
-                    {{ new Intl.NumberFormat().format(land_area) }}m<sup>2</sup>
+                    {{ formatNumber(land_area) }}m<sup>2</sup>
                   </span>
                 </b-card-text>
               </b-card>

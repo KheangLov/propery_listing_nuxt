@@ -8,24 +8,27 @@
         </span>
       </b-link>
 
-      <b-form-group
-        label-for="filter-input"
-        class="mb-0"
-      >
-        <b-input-group>
+      <div>
+        <b-input-group
+          class="mb-3 search-input"
+          style="height: 41px;"
+        >
+          <b-input-group-prepend is-text>
+            <b-icon icon="search"></b-icon>
+          </b-input-group-prepend>
           <b-form-input
             id="filter-input"
-            v-model="filter"
             type="search"
-            placeholder="Type to Search"
-            style="min-height: 41px;"
+            @change="handleSearch($event)"
+            placeholder="Search by code"
+            style="height: 41px;"
           ></b-form-input>
         </b-input-group>
-      </b-form-group>
+      </div>
     </div>
 
     <b-table
-      class="text-truncate overflow-auto"
+      class="text-truncate overflow-auto border-bottom"
       :items="items"
       :fields="fields"
       :sort-by.sync="sortBy"
@@ -47,13 +50,13 @@
         ></b-img>
       </template>
       <template #cell(id)="{ item: { id } }">
-        {{ id.toString().padStart(6, '0') }}
+        {{ paddString(id) }}
       </template>
-      <template #cell(sale_list_price)="{ item: { sale_list_price } }">
-        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_list_price) }}
+      <template #cell(sale_list_price)="{ item: { sale_list_price, is_sale } }">
+        {{ formatNumber(is_sale ? sale_list_price : 0, { style: 'currency', currency: 'USD' }) }}
       </template>
-      <template #cell(rent_list_price)="{ item: { rent_list_price } }">
-        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_list_price) }}
+      <template #cell(rent_list_price)="{ item: { rent_list_price, is_rent } }">
+        {{ formatNumber(is_rent ? rent_list_price : 0, { style: 'currency', currency: 'USD' }) }}
       </template>
       <template #cell(is_sale)="{ item: { is_sale } }">
         <b-icon
@@ -80,10 +83,10 @@
         {{ user.last_name }}
       </template>
       <template #cell(created_at)="{ item: { created_at } }">
-        {{ formatData(created_at) }}
+        {{ formatDatetime(created_at) }}
       </template>
       <template #cell(updated_at)="{ item: { updated_at } }">
-        {{ formatData(updated_at) }}
+        {{ formatDatetime(updated_at) }}
       </template>
       <template #cell(actions)="{ item: { id, status, is_sale, is_rent, sale_list_price, rent_list_price } }">
         <b-button
@@ -100,10 +103,10 @@
           :id="`modal-convert-listing-${id}`"
           centered
           title="CONVERT TO LISTING"
-          @ok="handleOk"
+          @ok="handleOk(is_rent, is_sale)"
         >
           <ValidationObserver ref="form">
-            <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
+            <b-form enctype="multipart/form-data">
               <b-row>
                 <b-col cols="6" v-if="is_sale">
                   <b-form-group
@@ -257,7 +260,6 @@
 import _ from 'lodash';
 import axios from 'axios';
 import Noty from 'noty';
-import moment from 'moment';
 import { mapGetters } from 'vuex';
 import { Fragment } from 'vue-fragment';
 import { ValidationObserver, ValidationProvider } from "vee-validate";
@@ -360,14 +362,23 @@ export default {
     modalRejectAction(modal, form) {
       modal.show(`modal-reject-${form.id}`);
     },
-    handleOk() {
+    handleOk(is_rent, is_sale) {
       const reqInstance = axios.create({
         headers: {
           'Authorization': `Bearer ${this.access_token}`
         }
       });
       const { id: property_id, sale_list_price: sale_price, rent_list_price: rent_price } = this.form;
-      reqInstance.post(`${process.env.API_URL}/listings`, { property_id, sale_price, rent_price })
+      let param = { property_id };
+
+      if (is_rent) {
+        param.rent_price = rent_price;
+      }
+      if (is_sale) {
+        param.sale_price = sale_price;
+      }
+
+      reqInstance.post(`${process.env.API_URL}/listings`, param)
         .then(({ data: { data: { status } } }) => {
           new Noty({
             text: 'Property successfully converted to listing!',
@@ -393,7 +404,7 @@ export default {
         param.reason = JSON.stringify(this.check_fields);
       }
 
-      reqInstance.put(`${process.env.API_URL}/properties/${id}`, param)
+      reqInstance.put(`${process.env.API_URL}/properties/update_status/${id}`, param)
         .then(async () => {
           new Noty({
             text: status === 'property' ? 'Property approved' : 'Property rejected',
@@ -408,9 +419,6 @@ export default {
           }
         })
         .catch(err => console.log(err));
-    },
-    formatData(val) {
-      return moment(val);
     },
     handleDelete(id) {
       const vm = this;
@@ -449,6 +457,23 @@ export default {
       });
       dialog.show();
     },
+    async handleSearch(e) {
+      const reqInstance = axios.create({
+        headers: {
+          'Authorization': `Bearer ${this.access_token}`
+        }
+      });
+      let url = `${process.env.API_URL}/properties?page=1&size=10`;
+      if (e) {
+        url += `&search=${e}`;
+      }
+      const { items, total, page, size } = await reqInstance.get(url).then(({ data }) => data);
+      const pages = Math.ceil(total / size);
+      this.$set(this, 'items', items);
+      this.$set(this, 'total', total);
+      this.$set(this, 'page', page);
+      this.$set(this, 'pages', pages);
+    }
   },
 }
 </script>

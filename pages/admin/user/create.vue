@@ -2,9 +2,8 @@
   <fragment>
     <h4 class="title mb-4 text-uppercase">Create User</h4>
     <ValidationObserver ref="form">
-      <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
+      <b-form @submit.prevent="handleCreateUser" enctype="multipart/form-data">
         <b-row>
-
           <b-col cols="6">
             <b-form-group
               id="input-group-firstname"
@@ -202,7 +201,7 @@
         </b-row>
 
         <div class="text-left mt-3">
-          <b-button type="submit" variant="primary" v-if="button_loaded">
+          <b-button type="submit" variant="primary" :disabled="!button_loaded">
             <b-icon
               icon="arrow-right-square"
               aria-hidden="true"
@@ -227,8 +226,8 @@
 <script>
 import { mapGetters } from 'vuex';
 import { Fragment } from 'vue-fragment';
-import axios from 'axios';
-import Noty from 'noty';
+// import axios from 'axios';
+// import Noty from 'noty';
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 
 export default {
@@ -249,65 +248,60 @@ export default {
       confimation: '',
       profile: '',
       button_loaded: true,
+      redirect_url: '/admin/user'
     };
   },
   methods: {
     handleUpload(e) {
       const reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-      reader.onload = () => {
-        this.$set(this, 'profile', reader.result);
-        this.$set(this.form, 'profile', reader.result.split('base64,')[1]);
-      };
-      reader.onerror = error => {
-        console.log('Error: ', error);
-      };
+      this.readFileBase64(reader, e.target.files[0], 'profile', 'profile');
     },
-    handleSubmit() {
-      this.$set(this, 'button_loaded', false);
-      this.$refs.form.validate()
-        .then(async success => {
-          if (!success) {
-            new Noty({
-              text: 'Invild data!',
-              type: 'error',
-              timeout: 2000
-            }).show();
-            return false;
-          }
+    // handleCreate() {
+    //   this.$set(this, 'button_loaded', false);
+    //   this.$refs.form.validate()
+    //     .then(async success => {
+    //       if (!success) {
+    //         new Noty({
+    //           text: 'Invild data!',
+    //           type: 'error',
+    //           timeout: 2000
+    //         }).show();
+    //         return false;
+    //       }
 
-          await axios.post(`${process.env.API_URL}/register`, this.form)
-            .then(({ data: { success: suc, message } }) => {
-              if (!suc) {
-                new Noty({
-                  text: message ? message : 'Create failed!',
-                  type: 'error',
-                  timeout: 2000
-                }).show();
-                this.$set(this, 'button_loaded', true);
-                return false;
-              }
+    //       await axios.post(`${process.env.API_URL}/register`, this.form)
+    //         .then(({ data: { success: suc, message, field } }) => {
+    //           if (!suc) {
+    //             new Noty({
+    //               text: message ? message : 'Create failed!',
+    //               type: 'error',
+    //               timeout: 2000
+    //             }).show();
+    //             this.$refs.form.setErrors(field);
+    //             this.$set(this, 'button_loaded', true);
+    //             return false;
+    //           }
 
-              new Noty({
-                text: 'Success create',
-                type: 'success',
-                timeout: 2000
-              }).show();
-              setTimeout(() => window.location.href = '/auth/login', 2000);
-              this.form = {};
-              this.confimation = '';
-              this.$nextTick(() => this.$refs.form.reset());
-            })
-            .catch(err => {
-              new Noty({
-                text: "We've got some error during request",
-                type: suc ? 'success' : 'error',
-                timeout: 2000
-              }).show();
-              this.$set(this, 'button_loaded', true);
-            });
-        });
-    }
+    //           new Noty({
+    //             text: 'Success create',
+    //             type: 'success',
+    //             timeout: 2000
+    //           }).show();
+    //           setTimeout(() => window.location.href = '/auth/login', 2000);
+    //           this.form = {};
+    //           this.confimation = '';
+    //           this.$nextTick(() => this.$refs.form.reset());
+    //         })
+    //         .catch(err => {
+    //           new Noty({
+    //             text: "We've got some error during request",
+    //             type: suc ? 'success' : 'error',
+    //             timeout: 2000
+    //           }).show();
+    //           this.$set(this, 'button_loaded', true);
+    //         });
+    //     });
+    // }
   },
 }
 </script>

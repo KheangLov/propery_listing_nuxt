@@ -1,20 +1,23 @@
 <template>
   <fragment>
-    <b-form-group
-      label-for="filter-input"
+    <b-input-group
+      class="mb-3 search-input"
+      style="height: 41px;"
     >
-      <b-input-group>
-        <b-form-input
-          id="filter-input"
-          v-model="filter"
-          type="search"
-          placeholder="Type to Search"
-        ></b-form-input>
-      </b-input-group>
-    </b-form-group>
+      <b-input-group-prepend is-text>
+        <b-icon icon="search"></b-icon>
+      </b-input-group-prepend>
+      <b-form-input
+        id="filter-input"
+        type="search"
+        @change="handleSearch($event)"
+        placeholder="Search by (listing_code, property_code)"
+        style="height: 41px;"
+      ></b-form-input>
+    </b-input-group>
 
     <b-table
-      class="text-truncate overflow-auto"
+      class="text-truncate overflow-auto border-bottom"
       :items="items"
       :fields="fields"
       :sort-by.sync="sortBy"
@@ -23,20 +26,17 @@
       :filter="filter"
       responsive
     >
-      <template #cell(index)="data">
-        {{ data.index + 1 }}
-      </template>
       <template #cell(id)="{ item: { id } }">
-        {{ id.toString().padStart(6, '0') }}
+        {{ paddString(id) }}
       </template>
       <template #cell(property_id)="{ item: { property: { id } } }">
-        {{ id.toString().padStart(6, '0') }}
+        {{ paddString(id) }}
       </template>
-      <template #cell(sale_price)="{ item: { sale_price } }">
-        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(sale_price) }}
+      <template #cell(sale_price)="{ item: { property: { is_sale }, sale_price } }">
+        {{ formatNumber(is_sale ? sale_price : 0, { style: 'currency', currency: 'USD' }) }}
       </template>
-      <template #cell(rent_price)="{ item: { rent_price } }">
-        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(rent_price) }}
+      <template #cell(rent_price)="{ item: { property: { is_rent }, rent_price } }">
+        {{ formatNumber(is_rent ? rent_price : 0, { style: 'currency', currency: 'USD' }) }}
       </template>
       <template #cell(status)="{ item: { status } }">
         <b-badge
@@ -47,10 +47,10 @@
         </b-badge>
       </template>
       <template #cell(created_at)="{ item: { created_at } }">
-        {{ formatData(created_at) }}
+        {{ formatDatetime(created_at) }}
       </template>
       <template #cell(updated_at)="{ item: { updated_at } }">
-        {{ formatData(updated_at) }}
+        {{ formatDatetime(updated_at) }}
       </template>
       <template #cell(actions)="{ item: { id, status } }">
         <b-button
@@ -96,6 +96,17 @@
         </b-button>
       </template>
     </b-table>
+    <div class="overflow-auto">
+      <b-pagination-nav
+        class="d-inline-block mr-2"
+        :link-gen="linkGen"
+        :number-of-pages="pages"
+        v-model="page"
+        use-router
+      >
+      </b-pagination-nav>
+      <span class="text-muted d-inline-block">Total {{ total }} entries.</span>
+    </div>
   </fragment>
 </template>
 
@@ -122,11 +133,14 @@ export default {
       }
     });
 
-    const items = await reqInstance.get(`${process.env.API_URL}/listings`).then(val => val.data);
+    const { query } = context.route;
+    const pg = query.page ? query.page : 1;
+    const sz = 10;
+    const { items, total, page, size } = await reqInstance.get(`${process.env.API_URL}/listings?page=${pg}&size=${sz}`).then(({ data }) => data);
+    const pages = Math.ceil(total / size);
     return {
       access_token,
       fields: [
-        { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
         { key: 'id', label: 'Listing Code', sortable: true, sortDirection: 'desc' },
         { key: 'property_id', label: 'Property Code', sortable: true, sortDirection: 'desc' },
         { key: 'sale_price', label: 'Sale Price', sortable: true },
@@ -137,13 +151,36 @@ export default {
         { key: 'actions', label: 'Actions' }
       ],
       items,
+      pages,
+      total,
+      page,
+      size,
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
+      url: process.env.API_URL
     };
   },
+  watch: {
+    async page(val) {
+      const reqInstance = axios.create({
+        headers: {
+          'Authorization': `Bearer ${this.access_token}`
+        }
+      });
+
+      const { items } = await reqInstance.get(`${this.url}/listings?page=${val}&size=${this.size}`).then(({ data }) => data);
+      this.$set(this, 'items', items);
+    }
+  },
   methods: {
+    linkGen(pageNum) {
+      return {
+        path: '/admin/listing',
+        query: { page: pageNum }
+      }
+    },
     updateStatus(id, status) {
       const reqInstance = axios.create({
         headers: {
@@ -179,6 +216,23 @@ export default {
         })
         .catch(err => console.log(err));
     },
+    async handleSearch(e) {
+      const reqInstance = axios.create({
+        headers: {
+          'Authorization': `Bearer ${this.access_token}`
+        }
+      });
+      let url = `${process.env.API_URL}/listings?page=1&size=10`;
+      if (e) {
+        url += `&search=${e}`;
+      }
+      const { items, total, page, size } = await reqInstance.get(url).then(({ data }) => data);
+      const pages = Math.ceil(total / size);
+      this.$set(this, 'items', items);
+      this.$set(this, 'total', total);
+      this.$set(this, 'page', page);
+      this.$set(this, 'pages', pages);
+    }
   }
 }
 </script>

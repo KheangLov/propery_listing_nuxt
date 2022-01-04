@@ -82,6 +82,7 @@
                       required
                       placeholder="Enter email"
                       :class="errors.length ? 'border-danger' : ''"
+                      :disabled="loggedInUser.email == form.email"
                     >
                     </b-form-input>
                     <span v-if="errors.length" class="text-danger">
@@ -148,7 +149,7 @@
             </b-row>
 
             <div class="text-left mt-3">
-              <b-button type="submit" variant="primary">
+              <b-button type="submit" variant="primary" :disabled="!button_loaded">
                 <b-icon
                   icon="arrow-right-square"
                   aria-hidden="true"
@@ -233,7 +234,7 @@
             </b-row>
 
             <div class="text-left mt-3">
-              <b-button type="submit" variant="primary" v-if="button_loaded">
+              <b-button type="submit" variant="primary" :disabled="!button_loaded">
                 <b-icon
                   icon="arrow-right-square"
                   aria-hidden="true"
@@ -290,7 +291,6 @@ export default {
       access_token,
       form: {
         ...form,
-        disabled: false,
       },
       password_form: {},
       confimation: '',
@@ -301,14 +301,7 @@ export default {
   methods: {
     handleUpload(e) {
       const reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-      reader.onload = () => {
-        this.$set(this, 'profile', reader.result);
-        this.$set(this.form, 'profile', reader.result.split('base64,')[1]);
-      };
-      reader.onerror = error => {
-        console.log('Error: ', error);
-      };
+      this.readFileBase64(reader, e.target.files[0], 'profile', 'profile');
     },
     handleSubmit() {
       const vm = this;
@@ -317,7 +310,7 @@ export default {
         .then(async success => {
           if (!success) {
             new Noty({
-              text: 'Invild data!',
+              text: 'Invalid form input!',
               type: 'error',
               timeout: 2000
             }).show();

@@ -4,7 +4,6 @@
     <ValidationObserver ref="form">
       <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
         <b-row>
-
           <b-col cols="6">
             <b-form-group
               id="input-group-is-sale"
@@ -60,7 +59,7 @@
                 v-slot="{ errors }"
                 name="sale_list_price"
                 type="text"
-                rules="required"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-sale-price"
@@ -88,7 +87,7 @@
                 v-slot="{ errors }"
                 name="rent_list_price"
                 type="text"
-                rules="required"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-rent-price"
@@ -368,7 +367,7 @@
                 v-slot="{ errors }"
                 name="land_width"
                 type="text"
-                rules="required|numeric|min_value:100"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-width"
@@ -395,7 +394,7 @@
                 v-slot="{ errors }"
                 name="land_length"
                 type="text"
-                rules="required|numeric|min_value:100"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-length"
@@ -422,7 +421,7 @@
                 v-slot="{ errors }"
                 name="land_area"
                 type="text"
-                rules="required|numeric|min_value:100"
+                rules="required|decimal|min_value:100"
               >
                 <b-form-input
                   id="input-area"
@@ -457,37 +456,46 @@
           </b-col>
 
           <b-col cols="6">
-            <b-form-group
-              id="input-group-image"
-              label="Image"
-              label-for="input-image"
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="image"
+              type="text"
             >
-              <b-form-file class="mb-3" id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
-                <template slot="file-name" slot-scope="{ names }">
-                  <b-badge variant="dark">{{ names[0] }}</b-badge>
-                  <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
-                    + {{ names.length - 1 }} More files
-                  </b-badge>
-                </template>
-              </b-form-file>
-              <div class="w-100 text-right">
-                <b-img
-                  v-if="image"
-                  :src="image"
-                  fluid
-                  alt="Image 1"
-                ></b-img>
-              </div>
-            </b-form-group>
+              <b-form-group
+                id="input-group-image"
+                label="Image"
+                label-for="input-image"
+              >
+                <b-form-file class="mb-3" id="input-image" accept="image/jpeg, image/jpg" @change="handleUpload">
+                  <template slot="file-name" slot-scope="{ names }">
+                    <b-badge variant="dark">{{ names[0] }}</b-badge>
+                    <b-badge v-if="names.length > 1" variant="dark" class="ml-1">
+                      + {{ names.length - 1 }} More files
+                    </b-badge>
+                  </template>
+                </b-form-file>
+                <div class="w-100 text-right">
+                  <b-img
+                    v-if="image"
+                    :src="image"
+                    fluid
+                    alt="Image 1"
+                  ></b-img>
+                </div>
+                <span v-if="errors.length" class="text-danger">
+                  {{ errors[0] }}
+                </span>
+              </b-form-group>
+            </ValidationProvider>
           </b-col>
 
           <b-col cols="12">
-            <ValidationProvider
+            <!-- <ValidationProvider
               v-slot="{ errors }"
               name="description"
               type="text"
               rules="required"
-            >
+            > -->
               <b-form-group
                 id="input-group-desc"
                 label="Description"
@@ -497,15 +505,15 @@
                   id="input-desc"
                   v-model="form.description"
                   placeholder="Enter description"
-                  :class="errors.length ? 'border-danger' : ''"
                   rows="3"
                   max-rows="6"
                 ></b-form-textarea>
-                <span v-if="errors.length" class="text-danger">
+                <!-- <span v-if="errors.length" class="text-danger">
+                :class="errors.length ? 'border-danger' : ''"
                   {{ errors[0] }}
-                </span>
+                </span> -->
               </b-form-group>
-            </ValidationProvider>
+            <!-- </ValidationProvider> -->
           </b-col>
         </b-row>
 
@@ -557,7 +565,7 @@ export default {
       }
     });
 
-    const users = await reqInstance.get(`${process.env.API_URL}/users`).then(val => val.data);
+    const users = await reqInstance.get(`${process.env.API_URL}/all_users`).then(val => val.data);
     return {
       access_token,
       button_loaded: true,
@@ -656,22 +664,16 @@ export default {
     },
     handleUpload(e) {
       const reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-      reader.onload = () => {
-        this.$set(this, 'image', reader.result);
-        this.$set(this.form, 'image', reader.result.split('base64,')[1]);
-      };
-      reader.onerror = error => {
-        console.log('Error: ', error);
-      };
+      this.readFileBase64(reader, e.target.files[0], 'image', 'image');
     },
     handleSubmit() {
+      const vm = this;
       this.$set(this, 'button_loaded', false);
       this.$refs.form.validate()
         .then(async success => {
           if (!success) {
             new Noty({
-              text: 'Invild data!',
+              text: 'Invalid form input!',
               type: 'error',
               timeout: 2000
             }).show();
@@ -686,30 +688,51 @@ export default {
           });
 
           await reqInstance.post(`${process.env.API_URL}/properties`, this.form)
-            .then(val => {
-              const { data: { success: suc } } = val;
-              if (suc) {
+            .then(({ data: { success: suc, message, detail } }) => {
+              if (!suc || detail) {
                 new Noty({
-                  text: 'Success create',
-                  type: suc ? 'success' : 'error',
+                  text: message ? message : 'Create failed!',
+                  type: 'error',
                   timeout: 2000
                 }).show();
-                setTimeout(() => window.location.href = '/admin/property', 2000);
+
+                if (detail && Array.isArray(detail)) {
+                  detail.forEach(({ loc, msg }) => this.$refs.form.setErrors({ [loc[loc.length - 1]]: msg }));
+                }
+
+                return false;
               }
+
+              new Noty({
+                text: 'Success create',
+                type: 'success',
+                timeout: 2000
+              }).show();
+              setTimeout(() => window.location.href = '/admin/property', 2000);
 
               this.form = {};
               this.confimation = '';
+              this.$nextTick(() => this.$refs.form.reset());
             })
-            .catch(err =>{
+            .catch(err => {
+              let message = "We've got some error during request";
+              if (err.response.data && err.response.data.detail) {
+                const { detail } = err.response.data;
+                if (detail && Array.isArray(detail)) {
+                  detail.forEach(({ loc, msg }) => vm.$refs.form.setErrors({ [loc[loc.length - 1]]: msg }));
+                } else {
+                  message = err.response.data.detail;
+                }
+              }
+
               new Noty({
-                text: "We've got some error during request",
-                type: suc ? 'success' : 'error',
+                text: message,
+                type: 'error',
                 timeout: 2000
               }).show();
+
               this.$set(this, 'button_loaded', true);
             });
-
-          this.$nextTick(() => this.$refs.form.reset());
         });
     },
   },

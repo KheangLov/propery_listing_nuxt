@@ -20,8 +20,8 @@
         </div>
       </div>
       <b-row>
-        <b-col></b-col>
-        <b-col>
+        <b-col md="4"></b-col>
+        <b-col md="4">
           <p class="mb-3 text-muted d-flex justify-content-between">
             <strong class="mr-3">Username</strong>
             <span>
@@ -42,7 +42,7 @@
             </span>
           </p>
         </b-col>
-        <b-col></b-col>
+        <b-col md="4"></b-col>
       </b-row>
     </div>
   </fragment>

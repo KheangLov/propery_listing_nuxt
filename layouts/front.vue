@@ -1,5 +1,8 @@
 <template>
-  <fragment>
+  <div>
+    <div v-if="!loaded" class="preload">
+      <div class="pulse"></div>
+    </div>
     <b-navbar
       type="dark"
       variant="info"
@@ -60,13 +63,16 @@
         </b-navbar-nav>
       </b-container>
     </b-navbar>
-    <b-container class="content-wrapper p-0 my-4">
+    <b-container class="content-wrapper py-4">
       <Nuxt />
     </b-container>
-  </fragment>
+  </div>
 </template>
 
 <style lang="scss">
+  .bg-body-front {
+    background-color: #fff7f7 !important;
+  }
 
   #__nuxt {
 
@@ -162,12 +168,63 @@
   }
 </style>
 
+<style lang="sass">
+  .preload
+    position: fixed
+    top: 0
+    left: 0
+    bottom: 0
+    right: 0
+    background-color: #17a2b8 !important
+    z-index: 10000
+
+  @mixin opacity($opacity)
+    opacity: $opacity / 100
+    filter: alpha(opacity=$opacity)
+
+  .pulse
+    position: relative
+    left: 50%
+    top: 50vh
+    margin:
+      left: -40px
+      top: -40px
+    &:before, &:after
+      content: ''
+      border: 5px solid #fff
+      width: 80px
+      height: 80px
+      border-radius: 500px
+      position: absolute
+    &:before
+      animation: pulse-outer .8s ease-in infinite
+    &:after
+      animation: pulse-inner .8s linear infinite
+
+  @keyframes pulse-outer
+    0%
+      @include opacity(100)
+    50%
+      @include opacity(50)
+    100%
+      @include opacity(0)
+
+  @keyframes pulse-inner
+    0%
+      transform: scale(0)
+      @include opacity(0)
+    100%
+      transform: scale(1)
+      @include opacity(100)
+</style>
+
 <script>
 import { mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
+      loaded: false,
       time: '',
       date: '',
       weeks: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
@@ -196,6 +253,10 @@ export default {
   },
   created() {
     setInterval(this.updateTime, 1000);
+  },
+  mounted() {
+    document.body.classList.add('bg-body-front');
+    setTimeout(() => this.$set(this, 'loaded', true), 500);
   }
 }
 </script>

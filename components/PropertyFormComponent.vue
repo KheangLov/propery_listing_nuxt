@@ -1,6 +1,6 @@
 <template>
-  <fragment>
-    <h4 class="title mb-4 text-uppercase">Create Property</h4>
+  <Fragment>
+    <h4 class="title mb-4 text-uppercase">Edit Property</h4>
     <b-alert show variant="warning" v-if="reasons.length" class="mb-4">
       <h4 class="alert-heading">Warning!</h4>
       <p>
@@ -153,118 +153,6 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-city"
-              label="City"
-              label-for="input-city"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="city"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :readonly="cities.length ? false : true"
-                  v-model="city"
-                  :options="cities"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a city --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('city')" class="text-danger">
-                  {{ reasons.includes('city') ? 'Invalid city' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-district"
-              label="District"
-              label-for="input-district"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="district"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :disabled="districts.length ? false : true"
-                  v-model="district"
-                  :options="districts"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a district --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('district')" class="text-danger">
-                  {{ reasons.includes('district') ? 'Invalid district' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-commune"
-              label="Commune"
-              label-for="input-commune"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="commune"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :disabled="communes.length ? false : true"
-                  v-model="commune"
-                  :options="communes"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a commune --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('commune')" class="text-danger">
-                  {{ reasons.includes('commune') ? 'Invalid commune' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="6">
-            <b-form-group
-              id="input-group-village"
-              label="Village"
-              label-for="input-village"
-            >
-              <ValidationProvider
-                v-slot="{ errors }"
-                name="village"
-                type="text"
-                rules="required"
-              >
-                <b-form-select
-                  :disabled="villages.length ? false : true"
-                  v-model="village"
-                  :options="villages"
-                >
-                  <template #first>
-                    <b-form-select-option :value="null" disabled>-- Please select a village --</b-form-select-option>
-                  </template>
-                </b-form-select>
-                <span v-if="errors.length || reasons.includes('village')" class="text-danger">
-                  {{ reasons.includes('village') ? 'Invalid village' : errors[0] }}
-                </span>
-              </ValidationProvider>
-            </b-form-group>
-          </b-col>
-
           <b-col cols="12">
             <b-form-group
               id="input-group-full-address"
@@ -355,11 +243,116 @@
               language="en"
               :center="{ lat: form.latitude, lng: form.longitude }"
               :options="{ mapTypeId: 'hybrid' }"
-              :zoom="11"
+              :zoom="14"
               @click="addMarker($event)"
               @loaded="markerAdd({ lat: form.latitude, lng: form.longitude })"
             >
             </GMap>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-city"
+              label="City"
+              label-for="input-city"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="city"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :readonly="cities.length ? false : true"
+                  v-model="city"
+                  :options="cities"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a city --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length || reasons.includes('city')" class="text-danger">
+                  {{ reasons.includes('city') ? 'Invalid city' : errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-district"
+              label="District"
+              label-for="input-district"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="district"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :disabled="districts.length ? false : true"
+                  v-model="district"
+                  :options="districts"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a district --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length || reasons.includes('district')" class="text-danger">
+                  {{ reasons.includes('district') ? 'Invalid district' : errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-commune"
+              label="Commune"
+              label-for="input-commune"
+            >
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="commune"
+                type="text"
+                rules="required"
+              >
+                <b-form-select
+                  :disabled="communes.length ? false : true"
+                  v-model="commune"
+                  :options="communes"
+                >
+                  <template #first>
+                    <b-form-select-option :value="null" disabled>-- Please select a commune --</b-form-select-option>
+                  </template>
+                </b-form-select>
+                <span v-if="errors.length || reasons.includes('commune')" class="text-danger">
+                  {{ reasons.includes('commune') ? 'Invalid commune' : errors[0] }}
+                </span>
+              </ValidationProvider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="6">
+            <b-form-group
+              id="input-group-village"
+              label="Village"
+              label-for="input-village"
+            >
+              <b-form-select
+                :disabled="villages.length ? false : true"
+                v-model="village"
+                :options="villages"
+              >
+                <template #first>
+                  <b-form-select-option :value="null" disabled>-- Please select a village --</b-form-select-option>
+                </template>
+              </b-form-select>
+              <span v-if="reasons.includes('village')" class="text-danger">
+                {{ reasons.includes('village') && 'Invalid village' }}
+              </span>
+            </b-form-group>
           </b-col>
 
           <b-col cols="6">
@@ -372,7 +365,7 @@
                 v-slot="{ errors }"
                 name="land_width"
                 type="text"
-                rules="required|numeric"
+                rules="required|numeric|min_value:100"
               >
                 <b-form-input
                   id="input-width"
@@ -399,7 +392,7 @@
                 v-slot="{ errors }"
                 name="land_length"
                 type="text"
-                rules="required|numeric"
+                rules="required|numeric|min_value:100"
               >
                 <b-form-input
                   id="input-length"
@@ -426,7 +419,7 @@
                 v-slot="{ errors }"
                 name="land_area"
                 type="text"
-                rules="required|numeric"
+                rules="required|numeric|min_value:100"
               >
                 <b-form-input
                   id="input-area"
@@ -545,7 +538,7 @@
         </div>
       </b-form>
     </ValidationObserver>
-  </fragment>
+  </Fragment>
 </template>
 
 <script>
@@ -562,6 +555,7 @@ export default {
     ValidationObserver,
     ValidationProvider
   },
+  // props: ['obj_create', ],
   computed: {
     ...mapGetters(['loggedInUser'])
   },
