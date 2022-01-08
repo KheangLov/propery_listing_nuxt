@@ -37,9 +37,6 @@
       :filter="filter"
       responsive
     >
-      <!-- <template #cell(index)="data">
-        {{ data.index + 1 }}
-      </template> -->
       <template #cell(profile)="{ item: { profile, first_name, last_name } }">
         <b-avatar
           :src="profile ? `${url}/${profile}` : ''"
@@ -152,7 +149,6 @@ export default {
     return {
       access_token,
       fields: [
-        // { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
         { key: 'profile', label: 'Profile' },
         { key: 'first_name', label: 'Firstname', sortable: true, sortDirection: 'desc' },
         { key: 'last_name', label: 'Lastname', sortable: true },
@@ -225,28 +221,39 @@ export default {
     },
     handleDelete(id) {
       const vm = this;
-      const reqInstance = axios.create({
-        headers: {
-          'Authorization': `Bearer ${this.access_token}`
-        }
+      const dialog = new Noty({
+        text: 'Do you really want to delete this property?',
+        type: 'error',
+        buttons: [
+          Noty.button('YES', 'btn btn-secondary', () => {
+            const reqInstance = axios.create({
+              headers: {
+                'Authorization': `Bearer ${this.access_token}`
+              }
+            });
+
+            reqInstance.delete(`${process.env.API_URL}/users/${id}`)
+              .then(({ data: { message } }) => {
+                if (message)
+                  new Noty({
+                    text: message,
+                    type: 'success',
+                  }).show();
+
+                vm.items = _.filter(vm.items, o => o.id != id);
+              })
+              .catch(err => new Noty({
+                text: "We've got some error during request!",
+                type: 'error',
+                timeout: 2000
+              }).show());
+
+            dialog.close();
+          }, {id: 'button1', 'data-status': 'ok'}),
+          Noty.button('NO', 'btn btn-link text-white text-decoration-none', () => dialog.close())
+        ]
       });
-
-      reqInstance.delete(`${process.env.API_URL}/users/${id}`)
-        .then(({ data: { message } }) => {
-          if (message)
-            new Noty({
-              text: message,
-              type: message ? 'success' : 'error',
-              timeout: 2000
-            }).show();
-
-          vm.items = _.filter(vm.items, o => o.id != id);
-        })
-        .catch(err => new Noty({
-          text: "We've got some error during request",
-          type: 'error',
-          timeout: 2000
-        }).show());
+      dialog.show();
     },
     async handleSearch(e) {
       const reqInstance = axios.create({

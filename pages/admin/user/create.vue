@@ -226,8 +226,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import { Fragment } from 'vue-fragment';
-// import axios from 'axios';
-// import Noty from 'noty';
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 
 export default {
@@ -256,52 +254,6 @@ export default {
       const reader = new FileReader();
       this.readFileBase64(reader, e.target.files[0], 'profile', 'profile');
     },
-    // handleCreate() {
-    //   this.$set(this, 'button_loaded', false);
-    //   this.$refs.form.validate()
-    //     .then(async success => {
-    //       if (!success) {
-    //         new Noty({
-    //           text: 'Invild data!',
-    //           type: 'error',
-    //           timeout: 2000
-    //         }).show();
-    //         return false;
-    //       }
-
-    //       await axios.post(`${process.env.API_URL}/register`, this.form)
-    //         .then(({ data: { success: suc, message, field } }) => {
-    //           if (!suc) {
-    //             new Noty({
-    //               text: message ? message : 'Create failed!',
-    //               type: 'error',
-    //               timeout: 2000
-    //             }).show();
-    //             this.$refs.form.setErrors(field);
-    //             this.$set(this, 'button_loaded', true);
-    //             return false;
-    //           }
-
-    //           new Noty({
-    //             text: 'Success create',
-    //             type: 'success',
-    //             timeout: 2000
-    //           }).show();
-    //           setTimeout(() => window.location.href = '/auth/login', 2000);
-    //           this.form = {};
-    //           this.confimation = '';
-    //           this.$nextTick(() => this.$refs.form.reset());
-    //         })
-    //         .catch(err => {
-    //           new Noty({
-    //             text: "We've got some error during request",
-    //             type: suc ? 'success' : 'error',
-    //             timeout: 2000
-    //           }).show();
-    //           this.$set(this, 'button_loaded', true);
-    //         });
-    //     });
-    // }
   },
 }
 </script>

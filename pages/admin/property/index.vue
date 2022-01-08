@@ -290,7 +290,6 @@ export default {
     return {
       access_token,
       fields: [
-        // { key: 'index', label: 'No.', sortable: true, sortDirection: 'desc' },
         { key: 'image', label: 'Image' },
         { key: 'id', label: 'Property Code', sortable: true, sortDirection: 'desc' },
         { key: 'sale_list_price', label: 'Sale Price', sortable: true, sortDirection: 'desc' },

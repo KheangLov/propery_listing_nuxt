@@ -15,8 +15,8 @@
           >
             <b-card-text class="m-0 p-0 d-flex justify-content-between">
               <h4><b-icon icon="house" class="mb-2 d-block"></b-icon></h4>
-              <h4 class="mb-0 d-inline-block">
-                {{ property_count[k] }}
+              <h4 class="mb-0 d-inline-block text-lowercase">
+                {{ property_count[k] }} properties
               </h4>
             </b-card-text>
             <h4 class="font-weight-bold mb-0 mr-3 text-truncate">
@@ -32,8 +32,8 @@
           <b-card :bg-variant="k == 'false' ? 'success' : 'danger'" text-variant="white" class="shadow-sm text-uppercase border-0">
             <b-card-text class="m-0 p-0 d-flex justify-content-between">
               <h4><b-icon icon="person" class="mb-2 d-block"></b-icon></h4>
-              <h4 class="mb-0 d-inline-block">
-                {{ user_count[k] }}
+              <h4 class="mb-0 d-inline-block text-lowercase">
+                {{ user_count[k] }} users
               </h4>
             </b-card-text>
             <h4 class="font-weight-bold mb-0 mr-3 text-truncate">
@@ -49,8 +49,8 @@
           <b-card :bg-variant="k == 'active' ? 'success' : 'danger'" text-variant="white" class="shadow-sm text-uppercase border-0">
             <b-card-text class="m-0 p-0 d-flex justify-content-between">
               <h4><b-icon icon="list-check" class="mb-2 d-block"></b-icon></h4>
-              <h4 class="mb-0 d-inline-block">
-                {{ listing_count[k] }}
+              <h4 class="mb-0 d-inline-block text-lowercase">
+                {{ listing_count[k] }} listings
               </h4>
             </b-card-text>
             <h4 class="font-weight-bold mb-0 mr-3 text-truncate">
@@ -96,6 +96,12 @@
             </template>
             <template #cell(rent_price)="{ item: { property: { is_rent }, rent_price } }">
               {{ formatNumber(is_rent ? rent_price : 0, { style: 'currency', currency: 'USD' }) }}
+            </template>
+            <template #cell(created_at)="{ item: { created_at } }">
+              {{ formatDatetime(created_at) }}
+            </template>
+            <template #cell(updated_at)="{ item: { updated_at } }">
+              {{ formatDatetime(updated_at) }}
             </template>
             <template #cell(status)="{ item: { status } }">
               <b-badge
@@ -151,6 +157,12 @@
                 :icon="is_rent ? 'check-circle' : 'circle'"
                 aria-hidden="true"
               ></b-icon>
+            </template>
+            <template #cell(created_at)="{ item: { created_at } }">
+              {{ formatDatetime(created_at) }}
+            </template>
+            <template #cell(updated_at)="{ item: { updated_at } }">
+              {{ formatDatetime(updated_at) }}
             </template>
             <template #cell(status)="{ item: { status } }">
               <b-badge

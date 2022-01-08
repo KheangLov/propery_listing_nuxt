@@ -757,13 +757,13 @@ export default {
 
           this.form.status = '';
           this.form.reason = JSON.stringify(this.reasons);
+          this.form.address = this.address_code;
           await reqInstance.put(`${process.env.API_URL}/properties/${vm.$route.params.id}`, this.form)
-            .then(val => {
-              const { data: { success: suc } } = val;
+            .then(({ data: { success: suc } }) => {
               if (suc) {
                 new Noty({
                   text: 'Success update',
-                  type: suc ? 'success' : 'error',
+                  type: 'success',
                   timeout: 2000
                 }).show();
                 this.$nextTick(() => this.$refs.form.reset());
@@ -771,9 +771,20 @@ export default {
               }
             })
             .catch(err => {
+              console.log(err);
               vm.$set(vm, 'loaded', false);
+              let message = "We've got some error during request";
+              if (err.response.data && err.response.data.detail) {
+                const { detail } = err.response.data;
+                if (detail && Array.isArray(detail)) {
+                  detail.forEach(({ loc, msg }) => vm.$refs.form.setErrors({ [loc[loc.length - 1]]: msg }));
+                } else {
+                  message = err.response.data.detail;
+                }
+              }
+
               new Noty({
-                text: "We've got some error during request",
+                text: message,
                 type: 'error',
                 timeout: 2000
               }).show();

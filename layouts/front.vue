@@ -46,10 +46,10 @@
             </b-dropdown-item>
             <b-dropdown-divider></b-dropdown-divider>
             <b-dropdown-item
-              href="/admin/profile"
+              href="/admin"
             >
-              <b-icon icon="person" aria-hidden="true" class="mr-2"></b-icon>
-              Profile
+              <b-icon icon="x-diamond" aria-hidden="true" class="mr-2"></b-icon>
+              Go to admin
             </b-dropdown-item>
             <b-dropdown-item
               v-if="isAuthenticated"
