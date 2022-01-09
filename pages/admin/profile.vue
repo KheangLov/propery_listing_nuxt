@@ -261,7 +261,7 @@ export default {
   },
   async asyncData({ store }) {
     const access_token = store.state.auth.user.access_token;
-
+    const url = process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net';
     return {
       access_token,
       form: {
@@ -269,9 +269,9 @@ export default {
       },
       password_form: {},
       confimation: '',
-      profile: store.state.auth.user.profile,
+      profile: `${url}/${store.state.auth.user.profile}`,
       button_loaded: true,
-      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'
+      url
     };
   },
   methods: {
