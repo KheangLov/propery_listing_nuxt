@@ -317,8 +317,8 @@ export default {
                 type: 'error',
                 timeout: 2000
               }).show();
-              this.$set(this, 'button_loaded', true);
             });
+          this.$set(this, 'button_loaded', true);
         });
     },
     handleChangePassword() {
