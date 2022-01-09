@@ -30,6 +30,8 @@ export default {
     ]
   },
 
+  target: 'static',
+
   axios: {
     baseURL: process.env.API_URL,
     credential: true,
