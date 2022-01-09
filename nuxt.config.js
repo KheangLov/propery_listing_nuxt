@@ -106,9 +106,7 @@ export default {
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios',
     '@nuxtjs/auth',
-    ['nuxt-gmaps', {
-      key: 'AIzaSyDil3fAJv-TSSv2OMEIu2fPl7bMfc8x5a0',
-    }]
+    ['nuxt-gmaps', {}]
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
