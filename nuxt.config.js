@@ -31,6 +31,7 @@ export default {
   },
 
   target: 'static',
+  mode: 'client',
 
   axios: {
     baseURL: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net' ? process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net' : 'https://fastapi-kheanglov.cloud.okteto.net',
