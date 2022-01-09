@@ -95,7 +95,7 @@
         <b-button
           variant="link"
           class="text-info p-0"
-          :href="`listing/${id}`"
+          :href="`/admin/listing/${id}`"
           v-b-tooltip.hover
           title="Edit"
         >
