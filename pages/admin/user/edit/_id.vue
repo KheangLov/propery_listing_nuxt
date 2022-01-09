@@ -295,7 +295,7 @@ export default {
       },
       password_form: {},
       confimation: '',
-      profile: `${url}${form.profile}`,
+      profile: `${url}/${form.profile}`,
       button_loaded: true,
       url
     };
