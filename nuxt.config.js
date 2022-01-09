@@ -31,7 +31,7 @@ export default {
   },
 
   axios: {
-    baseURL: 'http://localhost:9800',
+    baseURL: process.env.API_URL,
     credential: true,
   },
 
