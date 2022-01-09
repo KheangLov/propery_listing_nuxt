@@ -138,7 +138,7 @@
                   <div class="w-100 text-center">
                     <b-avatar
                       v-if="profile"
-                      :src="`${url}${profile}`"
+                      :src="profile"
                       size="10rem"
                     >
                     </b-avatar>
