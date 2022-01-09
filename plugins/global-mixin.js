@@ -73,7 +73,7 @@ const mixin = {
       return new Intl.NumberFormat('en-US', option).format(val);
     },
     formatDatetime(val) {
-      return moment(val).format("dddd, MMMM Do YYYY, h:mm:ss A");
+      return moment(val).local().format("dddd, MMMM Do YYYY, h:mm:ss A");
     },
     getAddressByLatLng(lat, lng) {
       axios.get(`${process.env.Z1_DATA_URL ? process.env.Z1_DATA_URL : 'https://mapapi.zillennium.com/'}v1/communes?lat=${lat}&lng=${lng}`)
