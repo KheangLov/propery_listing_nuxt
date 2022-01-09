@@ -138,7 +138,7 @@
                   <div class="w-100 text-center">
                     <b-avatar
                       v-if="profile"
-                      :src="profile"
+                      :src="`${url}${profile}`"
                       size="10rem"
                     >
                     </b-avatar>
@@ -271,6 +271,7 @@ export default {
       confimation: '',
       profile: store.state.auth.user.profile,
       button_loaded: true,
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'
     };
   },
   methods: {

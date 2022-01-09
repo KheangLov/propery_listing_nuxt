@@ -287,6 +287,7 @@ export default {
       .then(val => val.data)
       .catch(err => console.log(err));
 
+    const url = process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net';
     return {
       access_token,
       form: {
@@ -294,8 +295,9 @@ export default {
       },
       password_form: {},
       confimation: '',
-      profile: form.profile,
+      profile: `${url}${form.profile}`,
       button_loaded: true,
+      url
     };
   },
   methods: {

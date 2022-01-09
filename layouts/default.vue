@@ -38,7 +38,7 @@
                 #button-content
               >
                 <b-avatar
-                  :src="loggedInUser.profile ? loggedInUser.profile : ''"
+                  :src="loggedInUser.profile ? `${url}/${loggedInUser.profile}` : ''"
                   :text="!loggedInUser.profile ? `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}` : ''"
                 ></b-avatar>
               </template>
@@ -193,6 +193,7 @@ export default {
   middleware: 'authenticated',
   data() {
     return {
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net',
       isUserScrolling: false,
       navItems: [
         {
