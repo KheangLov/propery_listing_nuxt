@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <div class="d-flex justify-content-between">
+    <div class="d-sm-flex justify-content-between">
       <b-link href="/admin/property/create" class="btn btn-secondary mb-3">
         <b-icon icon="person-plus" aria-hidden="true" class="mr-2"></b-icon>
         <span style="font-size: 18px;">
