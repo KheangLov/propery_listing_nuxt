@@ -24,7 +24,7 @@
     "noty": "^3.2.0-beta",
     "nuxt": "^2.14.5",
     "nuxt-gmaps": "^1.2.10",
-    "sass": "^1.47.0",
+    "sass": "~1.32.12",
     "sass-loader": "^10.0.2",
     "vee-validate": "^3.4.14",
     "vue-fragment": "^1.5.2",
