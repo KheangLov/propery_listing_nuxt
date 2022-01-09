@@ -114,11 +114,11 @@ export default {
     Fragment,
   },
   async asyncData({ params }) {
-    const entry = await axios.get(`${process.env.API_URL}/listings/front/${params.id}`)
+    const entry = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings/front/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
 
-    const address = await axios.get(`${process.env.API_URL}/kh_address/${entry.property.address}`)
+    const address = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/kh_address/${entry.property.address}`)
         .then(({ data: { path_en } }) => path_en.split(' / ').reverse().join(', '));
 
     return {
@@ -126,7 +126,7 @@ export default {
       property: entry.property,
       address,
       user: entry.property.user,
-      url: process.env.API_URL
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'
     };
   },
 }

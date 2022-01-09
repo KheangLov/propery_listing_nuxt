@@ -18,7 +18,7 @@ const mixin = {
             return false;
           }
 
-          await axios.post(`${process.env.API_URL}/register`, this.form)
+          await axios.post(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/register`, this.form)
             .then(({ data: { success: suc, message, field } }) => {
               if (!suc) {
                 new Noty({
@@ -76,7 +76,7 @@ const mixin = {
       return moment(val).format("dddd, MMMM Do YYYY, h:mm:ss A");
     },
     getAddressByLatLng(lat, lng) {
-      axios.get(`${process.env.Z1_DATA_URL}v1/communes?lat=${lat}&lng=${lng}`)
+      axios.get(`${process.env.Z1_DATA_URL ? process.env.Z1_DATA_URL : 'https://mapapi.zillennium.com/'}v1/communes?lat=${lat}&lng=${lng}`)
         .then(({ data: { data: { commune_code } } }) => {
           this.$set(this, 'city', commune_code.substring(0, 2));
           this.$set(this, 'district', commune_code.substring(0, 4));
@@ -92,7 +92,7 @@ const mixin = {
         });
     },
     getLatLngByAnyLevel(code) {
-      axios.get(`${process.env.Z1_DATA_URL}v1/administrations/${code}?boundary=true`)
+      axios.get(`${process.env.Z1_DATA_URL ? process.env.Z1_DATA_URL : 'https://mapapi.zillennium.com/'}v1/administrations/${code}?boundary=true`)
         .then(async response => {
             const {
               data: {
@@ -127,7 +127,7 @@ const mixin = {
     },
     getAddress(code = '') {
       const vm = this;
-      let url = `${process.env.API_URL}/kh_address`;
+      let url = `${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/kh_address`;
       if (code) {
         url += `?code=${code}`;
       }

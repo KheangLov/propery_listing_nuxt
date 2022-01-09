@@ -235,7 +235,7 @@ export default {
     //         return false;
     //       }
 
-    //       await axios.post(`${process.env.API_URL}/register`, this.form)
+    //       await axios.post(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/register`, this.form)
     //         .then(({ data: { success: suc, message, field } }) => {
     //           if (!suc) {
     //             new Noty({
@@ -262,7 +262,7 @@ export default {
     // }
   },
   mounted() {
-    console.log(process.env.API_URL);
+    console.log(process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net');
   }
 }
 </script>

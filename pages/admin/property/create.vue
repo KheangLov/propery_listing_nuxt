@@ -565,7 +565,7 @@ export default {
       }
     });
 
-    const users = await reqInstance.get(`${process.env.API_URL}/all_users`).then(val => val.data);
+    const users = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/all_users`).then(val => val.data);
     return {
       access_token,
       button_loaded: true,
@@ -688,7 +688,7 @@ export default {
           });
 
           this.form.reason = '';
-          await reqInstance.post(`${process.env.API_URL}/properties`, this.form)
+          await reqInstance.post(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties`, this.form)
             .then(({ data: { success: suc, message, detail } }) => {
               if (!suc || detail) {
                 new Noty({

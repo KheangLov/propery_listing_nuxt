@@ -71,7 +71,7 @@ export default {
         'Authorization': `Bearer ${access_token}`
       }
     });
-    const entry = await reqInstance.get(`${process.env.API_URL}/users/${params.id}`)
+    const entry = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/users/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
 

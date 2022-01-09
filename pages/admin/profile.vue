@@ -299,7 +299,7 @@ export default {
             }
           });
 
-          await reqInstance.put(`${process.env.API_URL}/users/${vm.loggedInUser.id}`, this.form)
+          await reqInstance.put(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/users/${vm.loggedInUser.id}`, this.form)
             .then(val => {
               const { data: { success: suc } } = val;
               if (suc) {
@@ -340,7 +340,7 @@ export default {
             }
           });
 
-          await reqInstance.put(`${process.env.API_URL}/change_password/${vm.$route.params.id}`, this.password_form)
+          await reqInstance.put(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/change_password/${vm.$route.params.id}`, this.password_form)
             .then(({ status }) => {
               if (status === 200) {
                 new Noty({

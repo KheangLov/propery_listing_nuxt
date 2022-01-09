@@ -118,15 +118,15 @@ export default {
         'Authorization': `Bearer ${access_token}`
       }
     });
-    const entry = await reqInstance.get(`${process.env.API_URL}/listings/${params.id}`)
+    const entry = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
 
-    const address = await axios.get(`${process.env.API_URL}/kh_address/${entry.property.address}`)
+    const address = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/kh_address/${entry.property.address}`)
         .then(({ data: { path_en } }) => path_en.split(' / ').reverse().join(', '));
 
     return {
-      url: process.env.API_URL,
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net',
       access_token,
       entry,
       property: entry.property,

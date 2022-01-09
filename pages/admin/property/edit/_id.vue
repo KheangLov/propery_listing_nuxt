@@ -583,11 +583,11 @@ export default {
         'Authorization': `Bearer ${access_token}`
       }
     });
-    const form = await reqInstance.get(`${process.env.API_URL}/properties/${params.id}`)
+    const form = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
 
-    const users = await reqInstance.get(`${process.env.API_URL}/all_users`).then(val => val.data);
+    const users = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/all_users`).then(val => val.data);
     const reasons = form.reason ? JSON.parse(form.reason) : [];
     form.reason = '';
     return {
@@ -616,7 +616,7 @@ export default {
       commune: null,
       village: null,
       image: form.image,
-      url: process.env.API_URL,
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net',
       users,
       latLng: {},
       mounted: false
@@ -758,7 +758,7 @@ export default {
           this.form.status = '';
           this.form.reason = JSON.stringify(this.reasons);
           this.form.address = this.address_code;
-          await reqInstance.put(`${process.env.API_URL}/properties/${vm.$route.params.id}`, this.form)
+          await reqInstance.put(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/${vm.$route.params.id}`, this.form)
             .then(({ data: { success: suc } }) => {
               if (suc) {
                 new Noty({

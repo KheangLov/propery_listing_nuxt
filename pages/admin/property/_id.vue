@@ -133,7 +133,7 @@ export default {
       }
     });
 
-    const entry = await reqInstance.get(`${process.env.API_URL}/properties/${params.id}`)
+    const entry = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/${params.id}`)
       .then(val => val.data)
       .catch(err => console.log(err));
 
@@ -142,12 +142,12 @@ export default {
       entry,
       user: {},
       address: '',
-      url: process.env.API_URL
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'
     };
   },
   methods: {
     getAddress(code) {
-      axios.get(`${process.env.API_URL}/kh_address/${code}`)
+      axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/kh_address/${code}`)
         .then(({ data: { path_en } }) => this.$set(this, 'address', path_en.split(' / ').reverse().join(', ')));
     }
   },

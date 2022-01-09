@@ -200,13 +200,13 @@ import axios from 'axios';
 export default {
   layout: 'front',
   async asyncData() {
-    const listings = await axios.get(`${process.env.API_URL}/listings/front`)
+    const listings = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings/front`)
       .then(res => res.data)
       .catch(err => console.log(err));
 
     return {
       listings,
-      url: process.env.API_URL,
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net',
     };
   },
 }

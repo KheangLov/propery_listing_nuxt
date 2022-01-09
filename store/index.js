@@ -8,6 +8,6 @@ export const getters = {
   },
 
   apiUrl() {
-    return process.env.API_URL;
+    return process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net';
   }
 }

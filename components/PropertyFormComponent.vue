@@ -567,7 +567,7 @@ export default {
       }
     });
 
-    const users = await reqInstance.get(`${process.env.API_URL}/users`).then(val => val.data);
+    const users = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/users`).then(val => val.data);
     return {
       access_token,
       button_loaded: true,
@@ -663,7 +663,7 @@ export default {
             }
           });
 
-          await reqInstance.post(`${process.env.API_URL}/properties`, this.form)
+          await reqInstance.post(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties`, this.form)
             .then(val => {
               const { data: { success: suc } } = val;
               if (suc) {
@@ -692,7 +692,7 @@ export default {
     },
     getAddress(code = '') {
       const vm = this;
-      axios.get(`${process.env.API_URL}/kh_address?code=${code}`)
+      axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/kh_address?code=${code}`)
         .then(res => {
           let key = 'cities';
 

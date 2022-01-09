@@ -147,7 +147,7 @@ export default {
     const { query } = context.route;
     const pg = query.page ? query.page : 1;
     const sz = 10;
-    const { items, total, page, size } = await reqInstance.get(`${process.env.API_URL}/listings?page=${pg}&size=${sz}`).then(({ data }) => data);
+    const { items, total, page, size } = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings?page=${pg}&size=${sz}`).then(({ data }) => data);
     const pages = Math.ceil(total / size);
     return {
       access_token,
@@ -171,7 +171,7 @@ export default {
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
-      url: process.env.API_URL
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'
     };
   },
   watch: {
@@ -206,7 +206,7 @@ export default {
         form.approved_by = this.loggedInUser.id;
       }
 
-      reqInstance.put(`${process.env.API_URL}/listings/${id}`, form)
+      reqInstance.put(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings/${id}`, form)
         .then(({ data: { success, message} }) => {
           if (success) {
             new Noty({
@@ -234,7 +234,7 @@ export default {
           'Authorization': `Bearer ${this.access_token}`
         }
       });
-      let url = `${process.env.API_URL}/listings?page=1&size=10`;
+      let url = `${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings?page=1&size=10`;
       if (e) {
         url += `&search=${e}`;
       }

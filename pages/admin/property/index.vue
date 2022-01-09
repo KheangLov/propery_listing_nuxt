@@ -285,7 +285,7 @@ export default {
     const { query } = context.route;
     const pg = query.page ? query.page : 1;
     const sz = 10;
-    const { items, total, page, size } = await reqInstance.get(`${process.env.API_URL}/properties?page=${pg}&size=${sz}`).then(({ data }) => data);
+    const { items, total, page, size } = await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties?page=${pg}&size=${sz}`).then(({ data }) => data);
     const pages = Math.ceil(total / size);
     return {
       access_token,
@@ -312,7 +312,7 @@ export default {
       sortDirection: 'asc',
       filter: null,
       form: {},
-      url: process.env.API_URL,
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net',
       check_fields: [],
       field_datas: [
         'sale_list_price',
@@ -377,7 +377,7 @@ export default {
         param.sale_price = sale_price;
       }
 
-      reqInstance.post(`${process.env.API_URL}/listings`, param)
+      reqInstance.post(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings`, param)
         .then(({ data: { data: { status } } }) => {
           new Noty({
             text: 'Property successfully converted to listing!',
@@ -403,7 +403,7 @@ export default {
         param.reason = JSON.stringify(this.check_fields);
       }
 
-      reqInstance.put(`${process.env.API_URL}/properties/update_status/${id}`, param)
+      reqInstance.put(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/update_status/${id}`, param)
         .then(async () => {
           new Noty({
             text: status === 'property' ? 'Property approved' : 'Property rejected',
@@ -413,7 +413,7 @@ export default {
 
           const index = _.findIndex(this.items, ['id', id]);
           if (index > -1) {
-            await reqInstance.get(`${process.env.API_URL}/properties/${id}`)
+            await reqInstance.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/${id}`)
               .then(({ data: { status: s } }) => vm.items[index].status = s);
           }
         })
@@ -432,7 +432,7 @@ export default {
               }
             });
 
-            reqInstance.delete(`${process.env.API_URL}/properties/${id}`)
+            reqInstance.delete(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/${id}`)
               .then(({ data: { message } }) => {
                 if (message)
                   new Noty({
@@ -462,7 +462,7 @@ export default {
           'Authorization': `Bearer ${this.access_token}`
         }
       });
-      let url = `${process.env.API_URL}/properties?page=1&size=10`;
+      let url = `${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties?page=1&size=10`;
       if (e) {
         url += `&search=${e}`;
       }

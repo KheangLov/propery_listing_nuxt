@@ -189,28 +189,28 @@ import axios from 'axios';
 
 export default {
   async asyncData() {
-    const user_count = await axios.get(`${process.env.API_URL}/users_count`)
+    const user_count = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/users_count`)
       .then(({ data }) => data)
       .catch(err => console.error(err));
-    const property_count = await axios.get(`${process.env.API_URL}/properties_count`)
+    const property_count = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties_count`)
       .then(({ data }) => data)
       .catch(err => console.error(err));
-    const latest_properties = await axios.get(`${process.env.API_URL}/properties/latest`)
+    const latest_properties = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/latest`)
       .then(({ data }) => data)
       .catch(err => console.error(err));
-    const listing_count = await axios.get(`${process.env.API_URL}/listings_count`)
+    const listing_count = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings_count`)
       .then(({ data }) => data)
       .catch(err => console.error(err));
-    const latest_listings = await axios.get(`${process.env.API_URL}/listings/latest`)
+    const latest_listings = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/listings/latest`)
       .then(({ data }) => data)
       .catch(err => console.error(err));
-    const address_count = await axios.get(`${process.env.API_URL}/kh_address_count`)
+    const address_count = await axios.get(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/kh_address_count`)
       .then(({ data }) => data)
       .catch(err => console.error(err));
 
 
     return {
-      url: process.env.API_URL,
+      url: process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net',
       latest_properties,
       latest_listings,
       user_count,
