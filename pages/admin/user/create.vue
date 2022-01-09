@@ -4,7 +4,7 @@
     <ValidationObserver ref="form">
       <b-form @submit.prevent="handleCreateUser" enctype="multipart/form-data">
         <b-row>
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-firstname"
               label="Firstname"
@@ -32,7 +32,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-lastname"
               label="Lastname"
@@ -60,7 +60,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-email"
               label="Email"
@@ -88,7 +88,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-email"
               label="Phone"
@@ -116,7 +116,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-password"
               label="Password"
@@ -144,7 +144,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-con-password"
               label="Confirm Password"
@@ -172,7 +172,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-profile"
               label="Profile"

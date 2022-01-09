@@ -4,7 +4,7 @@
     <ValidationObserver ref="form">
       <b-form @submit.prevent="handleSubmit" enctype="multipart/form-data">
         <b-row>
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-is-sale"
               label-for="input-is-sale"
@@ -26,7 +26,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-is-rent"
               label-for="input-is-rent"
@@ -48,7 +48,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               v-if="form.is_sale"
               id="input-group-sale-price"
@@ -76,7 +76,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               v-if="form.is_rent"
               id="input-group-rent-price"
@@ -104,7 +104,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-street"
               label="Street No."
@@ -132,7 +132,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-house"
               label="House No."
@@ -159,7 +159,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="12">
+          <b-col md="12">
             <b-form-group
               id="input-group-full-address"
               label="Full Address"
@@ -186,7 +186,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-lat"
               label="Latitude"
@@ -214,7 +214,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-lng"
               label="Longitude"
@@ -242,7 +242,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="12">
+          <b-col md="12">
             <GMap
               class="mb-3"
               ref="gMap"
@@ -255,7 +255,7 @@
             </GMap>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-city"
               label="City"
@@ -283,7 +283,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-district"
               label="District"
@@ -311,7 +311,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-commune"
               label="Commune"
@@ -339,7 +339,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-village"
               label="Village"
@@ -357,7 +357,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-width"
               label="Width"
@@ -384,7 +384,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-length"
               label="Length"
@@ -411,7 +411,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-area"
               label="Area"
@@ -438,7 +438,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <b-form-group
               id="input-group-user"
               label="User"
@@ -455,7 +455,7 @@
             </b-form-group>
           </b-col>
 
-          <b-col cols="6">
+          <b-col md="6">
             <ValidationProvider
               v-slot="{ errors }"
               name="image"
@@ -489,7 +489,7 @@
             </ValidationProvider>
           </b-col>
 
-          <b-col cols="12">
+          <b-col md="12">
             <!-- <ValidationProvider
               v-slot="{ errors }"
               name="description"

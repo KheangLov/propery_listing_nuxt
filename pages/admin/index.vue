@@ -61,7 +61,7 @@
       </b-row>
 
       <b-row>
-        <b-col cols="6">
+        <b-col md="6">
           <h4 class="font-weight-bold mb-2 text-uppercase text-muted">Latest listings</h4>
           <b-table
             class="text-truncate overflow-auto"
@@ -113,7 +113,7 @@
             </template>
           </b-table>
         </b-col>
-        <b-col cols="6">
+        <b-col md="6">
           <h4 class="font-weight-bold mb-2 text-uppercase text-muted">Latest properties</h4>
           <b-table
             class="text-truncate overflow-auto"

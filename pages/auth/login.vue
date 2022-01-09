@@ -53,8 +53,9 @@
             </span>
           </validation-provider>
         </b-form-group>
-        <b-button type="submit" block variant="outline-secondary mt-4">
-          <b-icon icon="arrow-right-circle" aria-hidden="true"></b-icon>
+        <b-button type="submit" block variant="outline-secondary mt-4" :disabled="loading">
+          <b-spinner small type="grow" v-if="loading"></b-spinner>
+          <b-icon icon="arrow-right-circle" aria-hidden="true" v-else></b-icon>
           Login
         </b-button>
         <div class="text-center mt-2">
@@ -78,7 +79,8 @@ export default {
   },
   data() {
     return {
-      form: {}
+      form: {},
+      loading: false,
     };
   },
   computed: {
@@ -98,6 +100,7 @@ export default {
           }
 
           const vm = this;
+          this.$set(this, 'loading', true);
           await this.$auth.loginWith('local', { data: this.form })
             .then(({ status }) => {
               if (status === 200) {
@@ -121,6 +124,7 @@ export default {
                 timeout: 2000
               }).show();
             });
+          this.$set(this, 'loading', false);
         });
     }
   }

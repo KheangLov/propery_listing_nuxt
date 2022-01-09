@@ -108,7 +108,7 @@
           <ValidationObserver ref="form">
             <b-form enctype="multipart/form-data">
               <b-row>
-                <b-col cols="6" v-if="is_sale">
+                <b-col md="6" v-if="is_sale">
                   <b-form-group
                     id="input-group-sale-price"
                     label="Sale Price"
@@ -135,7 +135,7 @@
                   </b-form-group>
                 </b-col>
 
-                <b-col cols="6" v-if="is_rent">
+                <b-col md="6" v-if="is_rent">
                   <b-form-group
                     id="input-group-rent-price"
                     label="Rent Price"
