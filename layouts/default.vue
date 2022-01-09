@@ -253,7 +253,7 @@ export default {
     handleActive() {
       this.clearActive();
       const route_splits = this.$nuxt.$route.name.split('-');
-      const route = route_splits[1] ?? 'admin';
+      const route = route_splits[1] ? route_splits[1] : 'admin';
       let index = _.findIndex(this.navItems, o => o.slug == route);
       if (index >= 0) this.navItems[index].classes += ' active';
     }
