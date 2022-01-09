@@ -5,7 +5,7 @@
       <div class="text-center mb-5">
         <div class="d-inline-block position-relative">
           <b-avatar
-            :src="entry.profile ? `${url}${entry.profile}` : ''"
+            :src="entry.profile ? `${url}/${entry.profile}` : ''"
             size="8rem"
             class="mb-3"
             :text="!entry.profile && `${entry.first_name[0]}${entry.last_name[0]}`"
