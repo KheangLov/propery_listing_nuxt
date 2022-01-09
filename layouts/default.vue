@@ -63,7 +63,7 @@
               </b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
-         </b-collapse>
+        </b-collapse>
       </b-container>
     </b-navbar>
     <b-container class="content-wrapper py-4">

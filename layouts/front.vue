@@ -7,60 +7,64 @@
       type="dark"
       variant="info"
       sticky
+      toggleable="md"
       class="shadow border-0 m-0"
     >
       <b-container>
         <b-navbar-brand class="front font-weight-bold px-2 text-white text-uppercase">
           <b-link href="/" class="text-white text-decoration-none" style="font-size: 26px;">P-Listing</b-link>
         </b-navbar-brand>
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item link-classes="p-3">
-            <span class="text-white" v-if="date && time">
-              {{ date }} - {{ time }}
-            </span>
-          </b-nav-item>
-          <b-nav-item
-            v-if="!loggedInUser"
-            link-classes="p-3 text-white text-decoration-none"
-            href="/auth/login"
-          >
-            LOGIN
-          </b-nav-item>
-          <b-nav-item-dropdown
-            v-else
-            right
-            class="p-0"
-            menu-class="border-0 shadow-sm p-0"
-          >
-            <template
-              #button-content
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item link-classes="p-3">
+              <span class="text-white" v-if="date && time">
+                {{ date }} - {{ time }}
+              </span>
+            </b-nav-item>
+            <b-nav-item
+              v-if="!loggedInUser"
+              link-classes="p-3 text-white text-decoration-none"
+              href="/auth/login"
             >
-              <b-avatar
-                :src="loggedInUser.profile ? `${url}/${loggedInUser.profile}` : ''"
-                :text="!loggedInUser.profile ? `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}` : ''"
-              ></b-avatar>
-            </template>
-            <b-dropdown-item disabled>
-              {{ loggedInUser.first_name }}
-              {{ loggedInUser.last_name }}
-            </b-dropdown-item>
-            <b-dropdown-divider></b-dropdown-divider>
-            <b-dropdown-item
-              href="/admin"
+              LOGIN
+            </b-nav-item>
+            <b-nav-item-dropdown
+              v-else
+              right
+              class="p-0"
+              menu-class="border-0 shadow-sm p-0"
             >
-              <b-icon icon="x-diamond" aria-hidden="true" class="mr-2"></b-icon>
-              Go to admin
-            </b-dropdown-item>
-            <b-dropdown-item
-              v-if="isAuthenticated"
-              href="javascript:void(0)"
-              @click="logout"
-            >
-              <b-icon icon="arrow-left-circle" aria-hidden="true" class="mr-2"></b-icon>
-              Logout
-            </b-dropdown-item>
-          </b-nav-item-dropdown>
-        </b-navbar-nav>
+              <template
+                #button-content
+              >
+                <b-avatar
+                  :src="loggedInUser.profile ? `${url}/${loggedInUser.profile}` : ''"
+                  :text="!loggedInUser.profile ? `${loggedInUser.first_name[0]}${loggedInUser.last_name[0]}` : ''"
+                ></b-avatar>
+              </template>
+              <b-dropdown-item disabled>
+                {{ loggedInUser.first_name }}
+                {{ loggedInUser.last_name }}
+              </b-dropdown-item>
+              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-item
+                href="/admin"
+              >
+                <b-icon icon="x-diamond" aria-hidden="true" class="mr-2"></b-icon>
+                Go to admin
+              </b-dropdown-item>
+              <b-dropdown-item
+                v-if="isAuthenticated"
+                href="javascript:void(0)"
+                @click="logout"
+              >
+                <b-icon icon="arrow-left-circle" aria-hidden="true" class="mr-2"></b-icon>
+                Logout
+              </b-dropdown-item>
+            </b-nav-item-dropdown>
+          </b-navbar-nav>
+        </b-collapse>
       </b-container>
     </b-navbar>
     <b-container class="content-wrapper py-4">
