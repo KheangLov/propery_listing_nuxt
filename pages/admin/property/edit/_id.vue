@@ -777,14 +777,16 @@ export default {
               if (err.response.data && err.response.data.detail) {
                 const { detail } = err.response.data;
                 if (detail && Array.isArray(detail)) {
-                  const field = loc[loc.length - 1];
-                  if (field === 'address') {
-                    ['city', 'district', 'commune', 'village'].forEach(v =>
-                      detail.forEach(({ loc, msg }) => vm.$refs.form.setErrors({ [v]: msg }))
-                    );
-                  } else {
-                    detail.forEach(({ loc, msg }) => vm.$refs.form.setErrors({ [loc[locInd]]: msg }));
-                  }
+                  detail.forEach(({ loc, msg }) => {
+                    const field = loc[loc.length - 1];
+                    if (field === 'address') {
+                      ['city', 'district', 'commune', 'village'].forEach(v =>
+                        vm.$refs.form.setErrors({ [v]: msg })
+                      );
+                    } else {
+                      vm.$refs.form.setErrors({ [field]: msg });
+                    }
+                  });
                 } else {
                   message = err.response.data.detail;
                 }
