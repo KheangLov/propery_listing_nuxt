@@ -757,7 +757,7 @@ export default {
 
           this.form.status = '';
           this.form.reason = JSON.stringify(this.reasons);
-          this.form.address = this.form.address ? this.form.address : this.address_code;
+          this.form.address = this.form.address ? this.form.address : (this.address_code ? this.address_code : this.origin_form.address);
           await reqInstance.put(`${process.env.API_URL ? process.env.API_URL : 'https://fastapi-kheanglov.cloud.okteto.net'}/properties/${vm.$route.params.id}`, this.form)
             .then(({ data: { success: suc } }) => {
               if (suc) {
