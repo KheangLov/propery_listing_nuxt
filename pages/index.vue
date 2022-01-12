@@ -19,7 +19,11 @@
             class="mb-3"
             :key="i"
           >
-            <b-link :href="`/listing/${id}`" class="text-info text-decoration-none">
+            <b-link
+              :href="`/listing/${id}`"
+              class="text-info text-decoration-none"
+              style="color: #00dcff !important;"
+            >
               <b-card
                 :img-src="image ? `${url}/${image}` : 'https://picsum.photos/600/300/?image=25'"
                 img-alt="Image"
